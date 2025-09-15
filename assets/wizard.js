@@ -117,8 +117,8 @@ function showBotMessage(title, sub) {
   messageDiv.className = 'message bot-message';
   messageDiv.innerHTML = `
     <div class="message-bubble">
-      <div style="font-size: 17px; font-weight: 600; color: var(--ink); margin: 0 0 8px 0; line-height: 1.3;">${title}</div>
-      ${sub ? `<div style="font-size: 15px; color: var(--muted); margin: 0; line-height: 1.4;">${sub}</div>` : ''}
+      <div class="message-title">${title}</div>
+      ${sub ? `<div class="message-subtitle">${sub}</div>` : ''}
     </div>
   `;
   chatMessages.appendChild(messageDiv);
@@ -130,7 +130,7 @@ function addUserMessage(text) {
   messageDiv.className = 'message user-message';
   messageDiv.innerHTML = `
     <div class="message-bubble">
-      <div style="font-size: 16px; font-weight: 500; color: white; margin: 0; line-height: 1.3;">${text}</div>
+      <div class="user-message-text">${text}</div>
     </div>
   `;
   chatMessages.appendChild(messageDiv);
