@@ -1098,7 +1098,7 @@ h1, .h1 {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--bg);
+  background: #7C3AED;
   border-bottom: 2px solid #7C3AED;
   transition: background 0.3s ease, backdrop-filter 0.3s ease;
   flex-shrink: 0;
@@ -1129,7 +1129,7 @@ h1, .h1 {
 .brand-logo {
   margin-block: auto;
   display: block;
-  color: var(--ink);
+  color: #ffffff;
   font-weight: 900;
 }
 
@@ -1693,7 +1693,7 @@ h1, .h1 {
   align-items: center;
   gap: 16px;
   border-top: 1.5px solid var(--line);
-  background: var(--brand);
+  background: #e2e8f0;
 }
 
   ß
@@ -1753,7 +1753,7 @@ h1, .h1 {
 .btn-chat.primary {
   background: #7C3AED;
   color: white;
-  border: 2px solid var(--surface);
+  border: none;
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
@@ -1766,7 +1766,7 @@ h1, .h1 {
 .btn-chat.ghost {
   background: #fff;
   color: #7C3AED;
-  border: 2px solid #fff;
+  border: 2px solid #7C3AED;
 }
 
 .btn-chat.ghost:hover {
