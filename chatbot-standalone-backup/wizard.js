@@ -205,7 +205,7 @@ function buildContactStep() {
   const wrap = document.createElement('div');
   wrap.style.display = 'grid';
   wrap.style.gridTemplateColumns = '1fr 1fr';
-  wrap.style.gap = '8px';
+  wrap.style.gap = '10px';
   wrap.className = 'grid2';
 
   const mkField = (id, node) => { 
@@ -277,8 +277,7 @@ function buildContactStep() {
   const consent = document.createElement('label');
   consent.style.display = 'flex'; 
   consent.style.alignItems = 'center'; 
-  consent.style.gap = '8px';
-  consent.style.fontSize = '14px'; 
+  consent.style.gap = '10px'; 
   consent.style.gridColumn = '1 / -1';
   
   const cb = document.createElement('input'); 

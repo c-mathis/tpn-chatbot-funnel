@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tax Peace Now — Free Assessment</title>
+  <link rel="stylesheet" href="assets/style.css">
+  
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '359485176693329');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=359485176693329&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17497432656"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-17497432656');
+  </script>
+</head>
+<body>
+  <div class="chat-container">
+    <header class="brandbar">
+      <div class="brandbar-inner">
+        <div class="brand-logo"><span>Tax Peace Now</span></div>
+        <div class="brand-actions"></div>
+      </div>
+    </header>
+
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    
+    <div class="chat-area">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot-message">
+        <div class="message-bubble">
+          <div class="message-title">Hi! I'm Kirk from Tax Peace Now</div>
+          <div class="message-subtitle">Let's find your path to tax resolution. This takes 2 minutes and is completely confidential.</div>
+        </div>
+      </div>
+    </div>
+    <div class="character-presence">
+      <img src="assets/tpn-character-transparent.png" alt="Kirk" class="character-avatar" />
+    </div>
+  </div>
+
+  <div class="fixed-input-area" id="dock">
+    <div class="answer-section">
+      <div class="appbar">
+        <div class="appbar-inner">
+          <div class="app-meta"><span id="stepLabel">Step 1 of 6</span></div>
+        </div>
+      </div>
+      <div id="controls"></div>
+    </div>
+    <div class="chat-controls">
+      <button class="btn-chat ghost" type="button" id="backBtn">← Back</button>
+      <button class="btn-chat primary" type="button" id="nextBtn">Send ✌️</button>
+    </div>
+  </div>
+
+  <!-- Disclosures bottom sheet -->
+  <div class="sheet-overlay" id="sheetOverlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-header">
+      <div class="sheet-title">Important Disclosures</div>
+      <button class="btn ghost" id="closeSheet" type="button">Close</button>
+    </div>
+    <div class="sheet-body">
+      <p><strong>Tax Resolution Disclaimer:</strong> This is a tax resolution service providing assistance with IRS tax debt. We are licensed tax professionals. Results vary and are not guaranteed. Some restrictions may apply.</p>
+      <p>Tax Peace Now</p>
+      <p><a href="#" class="link">Privacy</a> • <a href="#" class="link">Terms</a> • <a href="#" class="link">Do Not Sell or Share</a> • <a href="#" class="link">Contact</a></p>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn primary" id="ackSheet" type="button">I Understand</button>
+    </div>
+  </div>
+  </div>
+
+  <script src="assets/wizard.js"></script>
+  <script>
+    // Dock height + iOS keyboard handling + bottom sheet
+    (function(){
+      const root = document.documentElement;
+      const dock = document.getElementById('dock');
+      function setDockHeight(){
+        const h = dock.offsetHeight || 100;
+        root.style.setProperty('--dock-h', h + 'px');
+      }
+      setDockHeight();
+      window.addEventListener('resize', setDockHeight);
+      new ResizeObserver(setDockHeight).observe(dock);
+      if (window.visualViewport){
+        visualViewport.addEventListener('resize', () => {
+          const bottomInset = Math.max(0, (window.innerHeight - visualViewport.height - visualViewport.offsetTop));
+          dock.style.transform = bottomInset ? 'translateY(-'+ bottomInset +'px)' : 'translateY(0)';
+        });
+      }
+      const overlay = document.getElementById('sheetOverlay');
+      const sheet = document.getElementById('sheet');
+      function openSheet(){ overlay.style.opacity='1'; overlay.style.pointerEvents='auto'; sheet.classList.add('open'); }
+      function closeSheet(){ overlay.style.opacity='0'; overlay.style.pointerEvents='none'; sheet.classList.remove('open'); }
+      document.getElementById('closeSheet').addEventListener('click', closeSheet);
+      document.getElementById('ackSheet').addEventListener('click', closeSheet);
+      overlay.addEventListener('click', closeSheet);
+    })();
+  </script>
+</body>
+</html>
