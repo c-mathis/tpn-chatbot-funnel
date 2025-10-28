@@ -385,6 +385,28 @@ function advance(value) {
   addUserMessage(value);
   
   data[s.id] = value;
+  
+  // Track step completion with Meta pixel
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'CompleteRegistration', {
+      content_name: s.title,
+      status: 'step_completed',
+      step: step + 1,
+      step_id: s.id,
+      value: value
+    });
+  }
+  
+  // Track step completion with Google Ads
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'form_step_complete', {
+      step_number: step + 1,
+      step_id: s.id,
+      step_title: s.title,
+      user_response: value
+    });
+  }
+  
   step++;
   
   if (step < STEPS.length) {
@@ -431,6 +453,28 @@ function submit() {
     ts: new Date().toISOString(),
     source: 'Tax Peace Now Chatbot'
   };
+
+  // Track form submission with Meta pixel
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Lead', {
+      content_name: 'Tax Resolution Assessment',
+      content_category: 'tax_resolution',
+      value: data.debt_amount || 'unknown',
+      currency: 'USD'
+    });
+  }
+  
+  // Track form submission with Google Ads
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'conversion', {
+      send_to: 'AW-17497432656',
+      event_category: 'form_submission',
+      event_label: 'tax_resolution_lead',
+      debt_amount: data.debt_amount,
+      tax_type: data.tax_type,
+      employment_status: data.employment_status
+    });
+  }
 
   // Send to Google Apps Script
   postToGoogle(payload);
