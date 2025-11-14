@@ -18,11 +18,8 @@
   'https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '359485176693329');
   fbq('track', 'PageView');
-  fbq('track', 'Purchase', {
-    content_name: 'Tax Resolution Lead',
-    content_type: 'service',
-    currency: 'USD'
-  });
+  // Note: Lead event already tracked on form submission
+  // Additional conversion confirmation can be tracked here if needed
   </script>
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=359485176693329&ev=PageView&noscript=1"
