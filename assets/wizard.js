@@ -1,67 +1,228 @@
-// Tax Peace Now Chatbot - Peaceful vibes wizard with Google Sheets integration
-const STEPS = [
-  { 
-    id:'debt_amount',  
-    type:'pills',   
-    title:'How much do you owe the IRS?', 
-    sub:'Select the amount closest to your situation.', 
-    options:[
-      '$0 - $10,000',
-      '$10,001 - $20,000', 
-      '$20,001 - $30,000',
-      '$30,001 - $40,000', 
-      '$40,001 - $50,000', 
-      '$50,000 - $75,000',
-      '$75,000 - $100,000', 
-      '$100,001 - $199,999',
-      '$200,000 - $300,000', 
-      '$300,000 - $400,000',
-      '$400,000 - $500,000', 
-      '$500,000 and over'
-    ], 
-    required:true 
+// Tax Peace Now Chatbot - Conditional wizard with branching logic
+const QUESTIONS = {
+  // Step 1: Main tax problem identifier
+  tax_problem: {
+    id: 'tax_problem',
+    type: 'pills',
+    title: 'What best describes your current tax situation?',
+    sub: 'Select the option that fits best.',
+    options: [
+      'I owe back taxes and need help resolving it',
+      'I received a letter or notice from the IRS or state',
+      'I need to file past-due tax returns',
+      'I need help with this year\'s tax return',
+      'I need help with business taxes',
+      'I\'m being audited',
+      'I\'m not sure — I just know I need help'
+    ],
+    required: true
   },
-  { 
-    id:'tax_type', 
-    type:'pills',   
-    title:'Which type of taxes?', 
-    sub:'Select all that apply to your situation.', 
-    options:['Federal (IRS)', 'State', 'Both', 'Not sure'], 
-    required:true 
-  },
-  { 
-    id:'unfiled_years', 
-    type:'pills',   
-    title:'Do you have unfiled tax returns?', 
-    sub:'Select the option that best describes your filing status.', 
-    options:['Yes, some years', 'No, all filed', 'Not sure', 'Prefer not to say'], 
-    required:true 
-  },
-  { 
-    id:'employment_status', 
-    type:'pills',   
-    title:'Current employment status?', 
-    sub:'This helps us determine the best resolution options.', 
-    options:['Regular job (W-2)', 'Self-employed', 'Unemployed', 'Retired'], 
-    required:true 
-  },
-  { 
-    id:'collection_actions', 
-    type:'pills',   
-    title:'Any IRS collection actions?', 
-    sub:'Select what the IRS has done or threatened to do.', 
-    options:['Wage garnishment', 'Bank levy', 'Tax lien filed', 'Nothing yet'], 
-    required:true 
-  },
-  { 
-    id:'contact', 
-    type:'contact', 
-    title:'Almost done! Let\'s connect you with a tax specialist.', 
-    sub:'Enter your contact information and we\'ll call within 24 hours.', 
-    required:true 
-  }
-];
 
+  // === Back Taxes Branch ===
+  back_taxes_amount: {
+    id: 'back_taxes_amount',
+    type: 'pills',
+    title: 'Approximately how much do you owe?',
+    sub: 'Select your best estimate.',
+    options: ['Under $10,000', '$10,000–$25,000', '$25,000–$50,000', '$50,000–$100,000', 'Over $100,000', 'Not sure'],
+    required: true
+  },
+  back_taxes_actions: {
+    id: 'back_taxes_actions',
+    type: 'multi',
+    title: 'Have you received any of the following?',
+    sub: 'Select all that apply.',
+    options: ['Wage garnishment', 'Bank levy', 'Tax lien', 'Payment demand letter', 'None yet'],
+    required: true
+  },
+  back_taxes_payment_plan: {
+    id: 'back_taxes_payment_plan',
+    type: 'pills',
+    title: 'Are you currently on a payment plan?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+
+  // === Notice/Letter Branch ===
+  notice_type: {
+    id: 'notice_type',
+    type: 'pills',
+    title: 'What type of notice did you receive?',
+    sub: 'Select the closest match.',
+    options: ['Balance due notice', 'Audit notice', 'Collections warning', 'CP2000', 'Not sure'],
+    required: true
+  },
+  notice_deadline: {
+    id: 'notice_deadline',
+    type: 'date',
+    title: 'What is the deadline listed on the notice?',
+    sub: 'Enter the date if known.',
+    required: false
+  },
+  notice_amount: {
+    id: 'notice_amount',
+    type: 'pills',
+    title: 'Does the notice mention a specific dollar amount owed?',
+    sub: '',
+    options: ['Yes', 'No', 'Not sure'],
+    required: true
+  },
+
+  // === Unfiled Returns Branch ===
+  unfiled_years: {
+    id: 'unfiled_years',
+    type: 'pills',
+    title: 'How many years are unfiled?',
+    sub: '',
+    options: ['1 year', '2–3 years', '4–5 years', '6+ years'],
+    required: true
+  },
+  unfiled_refund: {
+    id: 'unfiled_refund',
+    type: 'pills',
+    title: 'Are you expecting a refund for any of those years?',
+    sub: '',
+    options: ['Yes', 'No', 'Not sure'],
+    required: true
+  },
+  unfiled_self_employed: {
+    id: 'unfiled_self_employed',
+    type: 'pills',
+    title: 'Are you self-employed?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+
+  // === This Year's Return Branch ===
+  filing_status: {
+    id: 'filing_status',
+    type: 'pills',
+    title: 'Are you filing as:',
+    sub: '',
+    options: ['Individual', 'Married filing jointly', 'Self-employed', 'Have rental properties', 'Own a business'],
+    required: true
+  },
+  filed_last_year: {
+    id: 'filed_last_year',
+    type: 'pills',
+    title: 'Did you file last year?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+  expect_owe_refund: {
+    id: 'expect_owe_refund',
+    type: 'pills',
+    title: 'Do you expect to owe or receive a refund?',
+    sub: '',
+    options: ['Owe', 'Refund', 'Not sure'],
+    required: true
+  },
+
+  // === Business Taxes Branch ===
+  business_structure: {
+    id: 'business_structure',
+    type: 'pills',
+    title: 'What is your business structure?',
+    sub: '',
+    options: ['Sole Proprietor', 'LLC', 'S-Corp', 'C-Corp', 'Partnership', 'Not sure'],
+    required: true
+  },
+  payroll_taxes_behind: {
+    id: 'payroll_taxes_behind',
+    type: 'pills',
+    title: 'Are you behind on payroll taxes?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+  business_operating: {
+    id: 'business_operating',
+    type: 'pills',
+    title: 'Is the business currently operating?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+
+  // === Audit Branch ===
+  audit_related: {
+    id: 'audit_related',
+    type: 'pills',
+    title: 'What is the audit related to?',
+    sub: '',
+    options: ['Individual return', 'Business return', 'Payroll', 'Not sure'],
+    required: true
+  },
+  audit_deadline: {
+    id: 'audit_deadline',
+    type: 'pills',
+    title: 'Do you have a deadline to respond?',
+    sub: '',
+    options: ['Yes', 'No', 'Not sure'],
+    required: true
+  },
+  audit_responded: {
+    id: 'audit_responded',
+    type: 'pills',
+    title: 'Have you already responded to the auditor/IRS?',
+    sub: '',
+    options: ['Yes', 'No'],
+    required: true
+  },
+
+  // === Not Sure Branch ===
+  not_sure_clarify: {
+    id: 'not_sure_clarify',
+    type: 'pills',
+    title: 'Which of these sounds closest to your situation?',
+    sub: '',
+    options: ['I owe money', 'I haven\'t filed', 'I got a notice/letter', 'I need help filing this year', 'It\'s business-related', 'I\'m being audited', 'Still not sure'],
+    required: true
+  },
+
+  // === Universal Questions ===
+  state: {
+    id: 'state',
+    type: 'select',
+    title: 'What state do you live in?',
+    sub: '',
+    options: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming','District of Columbia'],
+    required: true
+  },
+  tax_jurisdiction: {
+    id: 'tax_jurisdiction',
+    type: 'pills',
+    title: 'Is this IRS taxes, state taxes, or both?',
+    sub: '',
+    options: ['IRS', 'State', 'Both', 'Not sure'],
+    required: true
+  },
+  contact: {
+    id: 'contact',
+    type: 'contact',
+    title: 'Last step! Where can we reach you?',
+    sub: 'We\'ll be in touch shortly to discuss your options.',
+    required: true
+  }
+};
+
+// Define the flow paths based on tax_problem answer
+const FLOWS = {
+  'I owe back taxes and need help resolving it': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
+  'I received a letter or notice from the IRS or state': ['notice_type', 'notice_deadline', 'notice_amount'],
+  'I need to file past-due tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
+  'I need help with this year\'s tax return': ['filing_status', 'filed_last_year', 'expect_owe_refund'],
+  'I need help with business taxes': ['business_structure', 'payroll_taxes_behind', 'business_operating'],
+  'I\'m being audited': ['audit_related', 'audit_deadline', 'audit_responded'],
+  'I\'m not sure — I just know I need help': ['not_sure_clarify']
+};
+
+const UNIVERSAL_STEPS = ['state', 'tax_jurisdiction', 'contact'];
+
+// DOM elements
 const stepLabel = document.getElementById('stepLabel');
 const nextBtn = document.getElementById('nextBtn');
 const backBtn = document.getElementById('backBtn');
@@ -70,40 +231,61 @@ const chatMessages = document.getElementById('chatMessages');
 const progressBar = document.getElementById('progressBar');
 
 const params = new URLSearchParams(location.search);
-const utm = params.toString() ? ('?' + params.toString()) : '';
 
 // === Google Apps Script integration ===
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfDJy9Lfk5sZQsA6ccMJOf2XTvcNAeoMHdb7JhKqHtKQ6cYMUkLnuKKZMVyehTS4Hd/exec'; 
+const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfDJy9Lfk5sZQsA6ccMJOf2XTvcNAeoMHdb7JhKqHtKQ6cYMUkLnuKKZMVyehTS4Hd/exec';
 const NOTIFY_EMAILS = 'cameron@axesagency.com';
 
-let step = 0;
+// State
+let currentPath = [];
+let stepIndex = 0;
 const data = {};
 
-function setProgress(i) {
-  stepLabel.textContent = `Step ${Math.min(i + 1, STEPS.length)} of ${STEPS.length}`;
-  const pct = Math.round((i) / (STEPS.length - 1) * 100);
+function buildPath() {
+  // Start with tax_problem
+  currentPath = ['tax_problem'];
+
+  // If we have a tax_problem answer, add the conditional steps
+  if (data.tax_problem && FLOWS[data.tax_problem]) {
+    currentPath = currentPath.concat(FLOWS[data.tax_problem]);
+  }
+
+  // Add universal steps
+  currentPath = currentPath.concat(UNIVERSAL_STEPS);
+
+  return currentPath;
+}
+
+function getCurrentStep() {
+  buildPath();
+  return QUESTIONS[currentPath[stepIndex]];
+}
+
+function getTotalSteps() {
+  buildPath();
+  return currentPath.length;
+}
+
+function setProgress() {
+  const total = getTotalSteps();
+  stepLabel.textContent = `Step ${stepIndex + 1} of ${total}`;
+  const pct = Math.round(stepIndex / (total - 1) * 100);
   progressBar.style.width = Math.max(2, pct) + '%';
 }
 
 function clearPreviousConversation() {
-  // Clear all existing messages except typing indicator
   const messages = chatMessages.querySelectorAll('.message:not(.typing-indicator)');
   messages.forEach(msg => {
     msg.classList.add('swipe-up-exit');
   });
-  
-  // Remove messages after animation
   setTimeout(() => {
     messages.forEach(msg => msg.remove());
   }, 350);
 }
 
 function addBotMessage(title, sub, isNewConversation = false) {
-  // Clear previous conversation if starting new question
-  if (isNewConversation && step > 0) {
+  if (isNewConversation && stepIndex > 0) {
     clearPreviousConversation();
-    
-    // Wait for clear animation before showing new message
     setTimeout(() => {
       showBotMessage(title, sub);
     }, 400);
@@ -137,64 +319,153 @@ function addUserMessage(text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function render() {
-  const s = STEPS[step];
-  setProgress(step);
+let isFirstRender = true;
 
-  // Add bot message for this step
-  if (step > 0) {
-    addBotMessage(s.title, s.sub, true); // Mark as new conversation
+function render() {
+  const s = getCurrentStep();
+  if (!s) return;
+
+  setProgress();
+
+  const answerSection = document.querySelector('.answer-section');
+
+  // Update question message
+  if (stepIndex === 0 && isFirstRender) {
+    // First render - add class for slow animation
+    answerSection.classList.add('first-enter');
+    showBotMessage(s.title, s.sub);
+
+    // Delay controls for first time
+    setTimeout(() => {
+      controls.innerHTML = '';
+      buildControlsForStep(s);
+    }, 400);
+
+    isFirstRender = false;
+  } else {
+    // Subsequent renders - remove first-enter class, update instantly
+    answerSection.classList.remove('first-enter');
+    addBotMessage(s.title, s.sub, true);
+    controls.innerHTML = '';
+    buildControlsForStep(s);
   }
 
-  // Update controls
-  controls.innerHTML = '';
-  buildControlsForStep(s);
-
-  backBtn.disabled = step === 0;
-  nextBtn.textContent = step === STEPS.length - 1 ? 'Get My Options' : 'Next';
+  backBtn.disabled = stepIndex === 0;
+  nextBtn.textContent = stepIndex === getTotalSteps() - 1 ? 'Get My Options' : 'Next';
 }
 
 function buildControlsForStep(s) {
   const answerSection = document.querySelector('.answer-section');
   const fixedInputArea = document.querySelector('.fixed-input-area');
-  
-  // Add debt-question class for first question only
-  if (s.id === 'debt_amount') {
-    fixedInputArea.classList.add('debt-question');
-  } else {
-    fixedInputArea.classList.remove('debt-question');
-  }
-  
+
+  // Reset classes
+  fixedInputArea.classList.remove('debt-question');
+  answerSection.classList.remove('scrollable');
+
   if (s.type === 'pills') {
     const el = document.createElement('div');
     el.className = 'options';
-    
-    // Add scrollable class for debt_amount question or if more than 4 options
-    if (s.id === 'debt_amount' || (s.options || []).length > 4) {
+
+    // Make scrollable if more than 5 options
+    if ((s.options || []).length > 5) {
       el.classList.add('scrollable');
       answerSection.classList.add('scrollable');
-    } else {
-      answerSection.classList.remove('scrollable');
+      fixedInputArea.classList.add('debt-question');
     }
-    
+
     (s.options || []).forEach(opt => {
       const item = document.createElement('button');
       item.type = 'button';
       item.className = 'option';
       item.innerHTML = `<span class="mark">✓</span><span class="label">${opt}</span>`;
-      
+
       if (data[s.id] === opt) item.classList.add('active');
-      
+
       item.addEventListener('click', () => {
         el.querySelectorAll('.option').forEach(n => n.classList.remove('active'));
         item.classList.add('active');
         advance(opt);
       });
-      
+
       el.appendChild(item);
     });
-    
+
     controls.appendChild(el);
+  } else if (s.type === 'multi') {
+    const el = document.createElement('div');
+    el.className = 'options';
+
+    const selected = data[s.id] || [];
+
+    (s.options || []).forEach(opt => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'option';
+      item.innerHTML = `<span class="mark">✓</span><span class="label">${opt}</span>`;
+
+      if (selected.includes(opt)) item.classList.add('active');
+
+      item.addEventListener('click', () => {
+        item.classList.toggle('active');
+      });
+
+      el.appendChild(item);
+    });
+
+    controls.appendChild(el);
+
+    // For multi-select, use the Next button
+    nextBtn.onclick = () => {
+      const selectedOpts = Array.from(el.querySelectorAll('.option.active'))
+        .map(btn => btn.querySelector('.label').textContent);
+      if (selectedOpts.length === 0) {
+        addBotMessage('Please select at least one option', '');
+        return;
+      }
+      advance(selectedOpts);
+    };
+  } else if (s.type === 'select') {
+    const wrap = document.createElement('div');
+    wrap.style.padding = '0';
+
+    const sel = document.createElement('select');
+    sel.className = 'select';
+    sel.innerHTML = `<option value="" disabled selected>Select your state</option>` +
+      s.options.map(o => `<option value="${o}">${o}</option>`).join('');
+    if (data[s.id]) sel.value = data[s.id];
+
+    sel.addEventListener('change', () => {
+      advance(sel.value);
+    });
+
+    wrap.appendChild(sel);
+    controls.appendChild(wrap);
+  } else if (s.type === 'date') {
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '8px';
+
+    const input = document.createElement('input');
+    input.type = 'date';
+    input.className = 'input';
+    input.value = data[s.id] || '';
+
+    const skipBtn = document.createElement('button');
+    skipBtn.type = 'button';
+    skipBtn.className = 'option';
+    skipBtn.innerHTML = `<span class="label">I don't know / Skip</span>`;
+    skipBtn.addEventListener('click', () => {
+      advance('Not specified');
+    });
+
+    wrap.appendChild(input);
+    wrap.appendChild(skipBtn);
+    controls.appendChild(wrap);
+
+    nextBtn.onclick = () => {
+      advance(input.value || 'Not specified');
+    };
   } else if (s.type === 'contact') {
     answerSection.classList.remove('scrollable');
     buildContactStep();
@@ -208,34 +479,22 @@ function buildContactStep() {
   wrap.style.gap = '8px';
   wrap.className = 'grid2';
 
-  const mkField = (id, node) => { 
-    node.dataset.id = id; 
-    node.classList.add('input'); 
-    return node; 
-  }
-  
-  const mkInput = (id, type, ph, val) => mkField(id, Object.assign(document.createElement('input'), {
-    type, 
-    placeholder: ph, 
-    value: val || ''
-  }));
-  
-  const mkSelect = (id, opts, label) => {
-    const sel = document.createElement('select'); 
-    sel.className = 'select'; 
-    sel.dataset.id = id;
-    sel.innerHTML = `<option value="" disabled selected>${label}</option>` + 
-                   opts.map(o => `<option>${o}</option>`).join('');
-    if (data[id]) sel.value = data[id];
-    return sel;
+  const mkField = (id, node) => {
+    node.dataset.id = id;
+    node.classList.add('input');
+    return node;
   };
 
-  // Form fields
+  const mkInput = (id, type, ph, val) => mkField(id, Object.assign(document.createElement('input'), {
+    type,
+    placeholder: ph,
+    value: val || ''
+  }));
+
   const firstName = mkInput('firstName', 'text', 'First name', data.firstName);
   const lastName = mkInput('lastName', 'text', 'Last name', data.lastName);
   const phone = mkInput('phone', 'tel', 'Phone number', data.phone);
   const email = mkInput('email', 'email', 'Email address', data.email);
-  const contactTime = mkSelect('contactTime', ['Morning (8am-12pm)', 'Afternoon (12pm-5pm)', 'Evening (5pm-8pm)'], 'Best time to call?');
 
   // Phone formatting
   const digits = s => (s || '').replace(/\D/g, '');
@@ -245,193 +504,177 @@ function buildContactStep() {
     if (d.length <= 6) return `(${a}) ${b}`;
     return `(${a}) ${b}-${c}`;
   };
-  
-  function maskPhone() { 
-    const d = digits(phone.value).slice(0, 10); 
-    phone.value = formatPhone(d); 
+
+  function maskPhone() {
+    const d = digits(phone.value).slice(0, 10);
+    phone.value = formatPhone(d);
   }
-  
-  phone.addEventListener('input', maskPhone); 
+
+  phone.addEventListener('input', maskPhone);
   phone.addEventListener('blur', maskPhone);
 
-  // Email validation
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-  
+
   function setError(el, msg) {
     el.classList.add('error');
-    const e = document.createElement('div'); 
-    e.className = 'error-text'; 
+    const existing = el.parentNode?.querySelector('.error-text');
+    if (existing) existing.remove();
+    const e = document.createElement('div');
+    e.className = 'error-text';
     e.textContent = msg;
-    el.parentNode && el.parentNode.appendChild(e);
+    el.parentNode?.appendChild(e);
   }
-  
+
   function clearError(el) {
     el.classList.remove('error');
-    if (el.parentNode) { 
-      const n = el.parentNode.querySelector('.error-text'); 
-      if (n) n.remove(); 
-    }
+    const n = el.parentNode?.querySelector('.error-text');
+    if (n) n.remove();
   }
 
   // Consent checkbox
   const consent = document.createElement('label');
-  consent.style.display = 'flex'; 
-  consent.style.alignItems = 'center'; 
+  consent.style.display = 'flex';
+  consent.style.alignItems = 'flex-start';
   consent.style.gap = '8px';
-  consent.style.fontSize = '14px'; 
+  consent.style.fontSize = '13px';
   consent.style.gridColumn = '1 / -1';
-  
-  const cb = document.createElement('input'); 
-  cb.type = 'checkbox'; 
-  cb.checked = !!data.terms; 
-  cb.dataset.id = 'terms';
-  
-  consent.appendChild(cb);
-  consent.appendChild(document.createTextNode('I agree to be contacted about tax resolution services and accept Tax Peace Now\'s Privacy Policy.'));
+  consent.style.lineHeight = '1.4';
 
-  // Layout
-  const cell = (node, full = false) => { 
-    const c = document.createElement('div'); 
-    if (full) c.style.gridColumn = '1 / -1'; 
-    c.appendChild(node); 
-    return c; 
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = !!data.terms;
+  cb.dataset.id = 'terms';
+  cb.style.marginTop = '3px';
+
+  consent.appendChild(cb);
+  consent.appendChild(document.createTextNode('I agree to be contacted about my tax situation and accept the Privacy Policy.'));
+
+  const cell = (node, full = false) => {
+    const c = document.createElement('div');
+    if (full) c.style.gridColumn = '1 / -1';
+    c.appendChild(node);
+    return c;
   };
-  
+
   wrap.appendChild(cell(firstName));
   wrap.appendChild(cell(lastName));
   wrap.appendChild(cell(phone));
   wrap.appendChild(cell(email));
-  wrap.appendChild(cell(contactTime, true));
   wrap.appendChild(cell(consent, true));
   controls.appendChild(wrap);
 
-  // Form validation and submission
-  nextBtn.onclick = function() {
-    [firstName, lastName, phone, email, contactTime].forEach(clearError);
+  nextBtn.onclick = function () {
+    [firstName, lastName, phone, email].forEach(clearError);
     let ok = true;
 
-    if (!firstName.value.trim()) { 
-      setError(firstName, 'First name is required'); 
-      ok = false; 
+    if (!firstName.value.trim()) {
+      setError(firstName, 'First name is required');
+      ok = false;
     }
-    if (!lastName.value.trim()) { 
-      setError(lastName, 'Last name is required'); 
-      ok = false; 
+    if (!lastName.value.trim()) {
+      setError(lastName, 'Last name is required');
+      ok = false;
     }
-    
+
     const d = digits(phone.value);
-    if (d.length < 10) { 
-      setError(phone, 'Please enter a valid 10-digit phone number'); 
-      ok = false; 
-    } else { 
-      phone.value = formatPhone(d); 
+    if (d.length < 10) {
+      setError(phone, 'Please enter a valid 10-digit phone number');
+      ok = false;
+    } else {
+      phone.value = formatPhone(d);
     }
-    
-    if (!email.value.trim() || !emailRe.test(email.value)) { 
-      setError(email, 'Please enter a valid email address'); 
-      ok = false; 
+
+    if (!email.value.trim() || !emailRe.test(email.value)) {
+      setError(email, 'Please enter a valid email address');
+      ok = false;
     }
-    
-    if (!contactTime.value) { 
-      setError(contactTime, 'Please select your preferred call time'); 
-      ok = false; 
-    }
-    
+
     if (!cb.checked) {
-      if (!consent.querySelector('.error-text')) { 
-        const e = document.createElement('div'); 
-        e.className = 'error-text'; 
-        e.textContent = 'Please check the box to continue.'; 
-        consent.appendChild(e); 
+      const existing = consent.querySelector('.error-text');
+      if (!existing) {
+        const e = document.createElement('div');
+        e.className = 'error-text';
+        e.textContent = 'Please check the box to continue.';
+        consent.appendChild(e);
       }
       ok = false;
-    } else { 
-      const e = consent.querySelector('.error-text'); 
-      if (e) e.remove(); 
+    } else {
+      const e = consent.querySelector('.error-text');
+      if (e) e.remove();
     }
 
-    if (!ok) {
-      return;
-    }
+    if (!ok) return;
 
-    // Save form data
     data.firstName = firstName.value.trim();
     data.lastName = lastName.value.trim();
     data.name = `${data.firstName} ${data.lastName}`;
     data.phone = formatPhone(digits(phone.value));
     data.email = email.value.trim();
-    data.contactTime = contactTime.value;
     data.terms = cb.checked;
-    
+
     submit();
   };
 
   backBtn.onclick = back;
 }
 
-function back() { 
-  if (step === 0) return; 
-  step--; 
-  render(); 
+function back() {
+  if (stepIndex === 0) return;
+  stepIndex--;
+  render();
 }
 
 function advance(value) {
-  const s = STEPS[step];
+  const s = getCurrentStep();
   if (s.required && (!value || value.length === 0)) {
     addBotMessage('Please select an option', 'Choose an answer to continue.');
     return;
   }
-  
+
   // Add user message
-  addUserMessage(value);
-  
+  const displayValue = Array.isArray(value) ? value.join(', ') : value;
+  addUserMessage(displayValue);
+
   data[s.id] = value;
-  
-  // Track step completion with Meta pixel
-  if (typeof fbq !== 'undefined') {
-    fbq('track', 'CompleteRegistration', {
-      content_name: s.title,
-      status: 'step_completed',
-      step: step + 1,
-      step_id: s.id,
-      value: value
-    });
-  }
-  
+
   // Track step completion with Google Ads
   if (typeof gtag !== 'undefined') {
     gtag('event', 'form_step_complete', {
-      step_number: step + 1,
+      step_number: stepIndex + 1,
       step_id: s.id,
       step_title: s.title,
-      user_response: value
+      user_response: displayValue
     });
   }
-  
-  step++;
-  
-  if (step < STEPS.length) {
+
+  // If this was the tax_problem question, rebuild the path
+  if (s.id === 'tax_problem') {
+    buildPath();
+  }
+
+  stepIndex++;
+
+  if (stepIndex < getTotalSteps()) {
     setTimeout(() => {
       render();
-    }, 1200);
+    }, 800);
   } else {
     setTimeout(() => {
-      addBotMessage('Perfect!', 'Connecting you with a tax specialist...', true);
+      addBotMessage('Perfect!', 'Processing your information...', true);
       setTimeout(submit, 1000);
-    }, 1200);
+    }, 800);
   }
 }
 
-// Submit to Google Sheets
 async function postToGoogle(payload) {
   if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.indexOf('script.google.com') === -1) {
     console.warn('GAS_WEB_APP_URL not set; skipping network post.');
     return;
   }
-  
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 1500);
-  
+
   try {
     const url = GAS_WEB_APP_URL + `?ua=${encodeURIComponent(navigator.userAgent)}&ref=${encodeURIComponent(document.referrer)}`;
     await fetch(url, {
@@ -447,49 +690,62 @@ async function postToGoogle(payload) {
   }
 }
 
-function submit() {
-  // Assemble payload
-  const payload = { 
-    ...data, 
+async function submit() {
+  const payload = {
+    ...data,
     ts: new Date().toISOString(),
-    source: 'Tax Peace Now Chatbot'
+    source: 'Tax Peace Now Chatbot',
+    page_url: window.location.href
   };
+
+  const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
   // Track form submission with Meta pixel
   if (typeof fbq !== 'undefined') {
     fbq('track', 'Lead', {
-      content_name: 'Tax Resolution Assessment',
-      content_category: 'tax_resolution',
-      value: data.debt_amount || 'unknown',
+      content_name: 'Tax Peace Assessment',
+      content_category: 'tax_help',
+      value: data.tax_problem || 'unknown',
       currency: 'USD'
+    }, {
+      event_id: eventId
     });
   }
-  
+
   // Track form submission with Google Ads
   if (typeof gtag !== 'undefined') {
     gtag('event', 'conversion', {
       send_to: 'AW-17497432656',
       event_category: 'form_submission',
-      event_label: 'tax_resolution_lead',
-      debt_amount: data.debt_amount,
-      tax_type: data.tax_type,
-      employment_status: data.employment_status
+      event_label: 'tax_peace_lead',
+      tax_problem: data.tax_problem,
+      state: data.state,
+      tax_jurisdiction: data.tax_jurisdiction
     });
   }
 
-  // Send to Google Apps Script
-  postToGoogle(payload);
+  // Send to Cloudflare Worker
+  try {
+    await fetch('https://tax-peace-conversions.YOUR-SUBDOMAIN.workers.dev/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...payload, event_id: eventId })
+    });
+  } catch (error) {
+    console.warn('Cloudflare Worker submission failed:', error);
+    postToGoogle(payload);
+  }
 
-  // Store locally for debugging
-  try { 
-    localStorage.setItem('tax_resolution_lead', JSON.stringify(payload)); 
-  } catch(_) {}
+  try {
+    localStorage.setItem('tax_peace_lead', JSON.stringify(payload));
+  } catch (_) {}
 
-  // Redirect to thank you page
   const qp = new URLSearchParams({ name: data.firstName || 'Friend' });
   const utm = params && params.toString() ? '&' + params.toString() : '';
   location.href = 'thank-you.html?' + qp.toString() + utm;
 }
 
-// Initialize
-render();
+// Initialize with a slight delay for the first question
+setTimeout(() => {
+  render();
+}, 800);
