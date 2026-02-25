@@ -1924,11 +1924,11 @@ h1, .h1 {
 .btn-chat.ghost {
   background: #fff;
   color: #BB2015;
-  border: 2px solid #BB2015;
+  border: 2px solid #F29F05;
 }
 
 .btn-chat.ghost:hover {
-  background: rgba(217, 61, 74, 0.1);
+  background: rgba(242, 159, 5, 0.1);
 }
 
 .btn-chat:disabled {
@@ -2419,6 +2419,10 @@ summary::marker {
   margin-top: 2px;
 }
 
+.problem-icon svg path {
+  fill: #F29F05;
+}
+
 .problem-card-content {
   flex: 1;
   min-width: 0;
@@ -2479,7 +2483,7 @@ summary::marker {
   width: 26px;
   height: 26px;
   margin-top: -2px;
-  background: var(--purp);
+  background: #BB2015;
   color: white;
   border-radius: 50%;
   font-size: 0.8rem;
@@ -2956,7 +2960,7 @@ summary::marker {
   }
   
   .cta-title {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
   
   .cta-subtitle {
