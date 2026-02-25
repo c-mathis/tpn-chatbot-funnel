@@ -19,7 +19,7 @@
 :root {
   /* Colors - New Scheme */
   --ink: #0C0E34;
-  --bg: #F2F0F4;
+  --bg: #f1f1f1;
   --surface: #FEFEFE;
   --muted: #6b6b7a;
   --line: #e2e0e8;
@@ -138,7 +138,7 @@
 
   
   /* Layout */
-  --radius: 16px;
+  --radius: 12px;
   --radius-sm: 8px;
   --radius-lg: 24px;
   --radius-xl: 32px;
@@ -861,7 +861,7 @@ h1, .h1 {
   align-items: center;
   justify-content: center;
   padding: 1rem 2rem;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius);
   border: none;
   background: var(--legal-blue);
   color: var(--surface);
@@ -953,6 +953,7 @@ h1, .h1 {
   flex-direction: column;
   gap: 8px;
   overflow: visible;
+  border-radius: 12px;
 }
 
 @media (max-width: 480px) {
@@ -980,9 +981,9 @@ h1, .h1 {
   width: 100%;
   padding: 10px 16px;
   color: var(--ink);
-  border: 2px solid #060A69;
+  border: 1px solid #060A69;
   background: #FEFEFE;
-  border-radius: 20px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -1011,7 +1012,7 @@ h1, .h1 {
   align-items: center;
   justify-content: center;
   font-size: var(--caption-lg-size);
-  color: var(--ink);
+  color: #F29F05;
   background: var(--warm-white);
   flex: 0 0 auto;
   transition: all 0.2s ease;
@@ -1035,7 +1036,7 @@ h1, .h1 {
 .option.active .mark {
   border-color: white;
   background: white;
-  color: var(--brand);
+  color: #F29F05;
 }
 
 .option.active .label {
@@ -1167,34 +1168,160 @@ h1, .h1 {
   align-items: center;
 }
 
+/* Navigation Menu */
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  margin-left: auto;
+}
+
+.nav-link {
+  color: #FEFEFE;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  opacity: 0.8;
+}
+
+.nav-cta {
+  background: #BB2015;
+  color: #FEFEFE;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #8a1810;
+  transform: translateY(-1px);
+}
+
+/* Hamburger Menu Button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  z-index: 60;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #FEFEFE;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    max-width: 280px;
+    height: 100vh;
+    background: #060A69;
+    flex-direction: column;
+    padding: 80px 30px 30px;
+    gap: 0;
+    transition: right 0.3s ease;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 55;
+  }
+
+  .nav-menu.open {
+    right: 0;
+  }
+
+  .nav-link {
+    font-size: 1.1rem;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-cta {
+    margin-top: 20px;
+    padding: 14px 24px;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
+
+/* Mobile menu overlay */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 50;
+}
+
+.nav-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
 .brand-logo {
   font-family: 'Cal Sans', var(--font-family);
-  margin-block: auto;
-  display: block;
+  display: flex;
+  align-items: center;
   color: #FEFEFE;
   font-weight: 600;
 }
 
 .logo-img {
-  height: 51px;
+  height: 70px;
   width: auto;
-  max-width: 170px;
   object-fit: contain;
-  margin-top: 0.125rem;
 }
 
 /* Responsive logo adjustments */
 @media (max-width: 768px) {
   .logo-img {
-    height: 43px;
-    max-width: 136px;
+    height: 55px;
   }
 }
 
 @media (max-width: 480px) {
   .logo-img {
-    height: 34px;
-    max-width: 119px;
+    height: 45px;
   }
 }
 
@@ -1229,7 +1356,7 @@ h1, .h1 {
 .progress-bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #060A69 0%, #0C0E34 100%);
+  background: linear-gradient(90deg, #F29F05 0%, #BB2015 100%);
   transition: width 0.25s ease;
 }
 
@@ -1625,7 +1752,7 @@ h1, .h1 {
 }
 
 .message-bubble {
-  background: #F2F0F4;
+  background: #f3f3f3;
   border-radius: 20px 20px 20px 4px;
   padding: 16px 20px;
   box-shadow: 0 3px 12px rgba(0,0,0,0.1);
@@ -1755,13 +1882,13 @@ h1, .h1 {
 }
 
 .answer-section {
-  background-color: var(--bg);
+  background-color: #f7f7f7;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0px 16px 16px 16px;
   min-height: 0;
-  border-top: 1px solid #060A6930;
+  border-top: 1.5px solid #06096993;
 }
 
 @media (max-width: 480px) {
@@ -1825,7 +1952,7 @@ h1, .h1 {
   align-items: center;
   gap: 16px;
   border-top: 1.5px solid var(--line);
-  background: #e2e0e8;
+  background: #dcdcdc;
 }
 
 @media (max-width: 480px) {
@@ -1881,7 +2008,7 @@ h1, .h1 {
   justify-content: center;
 
   padding: 14px 24px;
-  border-radius: 25px;
+  border-radius: 12px;
   border: none;
   font-size: 15px;
   font-weight: 600;
@@ -1924,7 +2051,7 @@ h1, .h1 {
 .btn-chat.ghost {
   background: #fff;
   color: #BB2015;
-  border: 2px solid #F29F05;
+  border: 2px solid #BB2015;
 }
 
 .btn-chat.ghost:hover {
@@ -2742,7 +2869,7 @@ summary::marker {
   background: var(--highlight);
   color: white;
   padding: 20px 40px;
-  border-radius: 30px;
+  border-radius: 12px;
   font-size: 1.25rem;
   font-weight: 700;
   border: none;
@@ -2812,7 +2939,7 @@ summary::marker {
   background: var(--purp);
   color: white;
   padding: 15px 30px;
-  border-radius: 25px;
+  border-radius: 12px;
   border: none;
   font-weight: 700;
   cursor: pointer;

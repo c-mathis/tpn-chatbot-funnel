@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tax Peace Now — Free Assessment</title>
+  <link rel="stylesheet" href="assets/style.css">
+  
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '359485176693329');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=359485176693329&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17497432656"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-17497432656');
+  </script>
+</head>
+<body>
+  <div class="chat-container">
+    <header class="brandbar">
+      <div class="brandbar-inner">
+        <div class="brand-logo"><span>Tax Peace Now</span></div>
+        <div class="brand-actions"></div>
+      </div>
+    </header>
+
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    
+    <div class="chat-area">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot-message">
+        <div class="message-bubble">
+          <div class="message-title">Let's find your path to tax resolution</div>
+          <div class="message-subtitle">This takes 2 minutes and is completely confidential.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed-input-area" id="dock">
+    <div class="answer-section">
+      <div class="appbar">
+        <div class="appbar-inner">
+          <div class="app-meta"><span id="stepLabel">Step 1 of 6</span></div>
+        </div>
+      </div>
+      <div id="controls"></div>
+    </div>
+    <div class="chat-controls">
+      <button class="btn-chat ghost" type="button" id="backBtn">← Back</button>
+      <button class="btn-chat primary" type="button" id="nextBtn">Send ✌️</button>
+    </div>
+  </div>
+
+  <!-- Disclosures bottom sheet -->
+  <div class="sheet-overlay" id="sheetOverlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-header">
+      <div class="sheet-title">Important Disclosures</div>
+      <button class="btn ghost" id="closeSheet" type="button">Close</button>
+    </div>
+    <div class="sheet-body">
+      <p><strong>Tax Resolution Disclaimer:</strong> This is a tax resolution service providing assistance with IRS tax debt. We are licensed tax professionals. Results vary and are not guaranteed. Some restrictions may apply.</p>
+      <p>Tax Peace Now</p>
+      <p><a href="#" class="link">Privacy</a> • <a href="#" class="link">Terms</a> • <a href="#" class="link">Do Not Sell or Share</a> • <a href="#" class="link">Contact</a></p>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn primary" id="ackSheet" type="button">I Understand</button>
+    </div>
+  </div>
+  </div>
+
+  <!-- Landing Page Content -->
+  <main class="landing-content">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <h1 class="hero-title">Find Your Path to Tax Peace</h1>
+        <p class="hero-subtitle">Don't let tax debt control your life. Our expert team has helped thousands of Americans resolve their tax problems and reclaim their financial freedom.</p>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-number">$2.8B+</div>
+            <div class="stat-label">Tax Debt Resolved</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">50,000+</div>
+            <div class="stat-label">Clients Helped</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Years Experience</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Problems We Solve -->
+    <section class="problems-section">
+      <div class="section-container">
+        <h2 class="section-title">Tax Problems Keeping You Up at Night?</h2>
+        <div class="problems-grid">
+          <div class="problem-card">
+            <div class="problem-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L13.09 8.26L19 7.27L14.18 12.73L21 14.69L14.27 16.04L17.5 22L12 18.5L6.5 22L9.73 16.04L3 14.69L9.82 12.73L5 7.27L10.91 8.26L12 2Z" fill="#DC2626"/>
+              </svg>
+            </div>
+            <h3>IRS Collections</h3>
+            <p>Wage garnishments, bank levies, and property seizures threatening your livelihood</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="#DC2626"/>
+              </svg>
+            </div>
+            <h3>Unfiled Returns</h3>
+            <p>Years of unfiled tax returns creating mounting penalties and interest</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 5.5V6.5L12 5.5L9 6.5V5.5L3 7V9L9 7.5V8.5L12 7.5L15 8.5V7.5L21 9ZM12 8C13.66 8 15 9.34 15 11V12H9V11C9 9.34 10.34 8 12 8ZM7 13H17C17.55 13 18 13.45 18 14V21C18 21.55 17.55 22 17 22H7C6.45 22 6 21.55 6 21V14C6 13.45 6.45 13 7 13Z" fill="#DC2626"/>
+              </svg>
+            </div>
+            <h3>Overwhelming Debt</h3>
+            <p>Tax debt that seems impossible to pay, growing larger each month</p>
+          </div>
+          <div class="problem-card">
+            <div class="problem-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="#DC2626"/>
+              </svg>
+            </div>
+            <h3>Constant Stress</h3>
+            <p>Anxiety and sleepless nights worrying about your tax situation</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Solutions -->
+    <section class="solutions-section">
+      <div class="section-container">
+        <h2 class="section-title">Your Path to Tax Resolution</h2>
+        <div class="solutions-grid">
+          <div class="solution-card">
+            <div class="solution-number">1</div>
+            <h3>Free Assessment</h3>
+            <p>We analyze your tax situation and identify the best resolution strategy for your specific case.</p>
+          </div>
+          <div class="solution-card">
+            <div class="solution-number">2</div>
+            <h3>Expert Negotiation</h3>
+            <p>Our licensed tax professionals negotiate directly with the IRS on your behalf.</p>
+          </div>
+          <div class="solution-card">
+            <div class="solution-number">3</div>
+            <h3>Tailored Solution</h3>
+            <p>We implement the best resolution option: payment plans, offers in compromise, or penalty abatement.</p>
+          </div>
+          <div class="solution-card">
+            <div class="solution-number">4</div>
+            <h3>Peace of Mind</h3>
+            <p>Sleep better knowing your tax problems are being handled by professionals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resolution Options -->
+    <section class="options-section">
+      <div class="section-container">
+        <h2 class="section-title">Tax Resolution Options</h2>
+        <div class="options-grid">
+          <div class="option-card">
+            <h3>Installment Agreement</h3>
+            <p>Set up affordable monthly payments that fit your budget</p>
+            <ul>
+              <li>Stop collection actions</li>
+              <li>Prevent wage garnishment</li>
+              <li>Protect your assets</li>
+            </ul>
+          </div>
+          <div class="option-card featured">
+            <div class="featured-badge">Most Popular</div>
+            <h3>Offer in Compromise</h3>
+            <p>Settle your tax debt for less than you owe</p>
+            <ul>
+              <li>Reduce total debt amount</li>
+              <li>Fresh start with the IRS</li>
+              <li>Stop penalties and interest</li>
+            </ul>
+          </div>
+          <div class="option-card">
+            <h3>Currently Not Collectible</h3>
+            <p>Temporarily suspend collection due to financial hardship</p>
+            <ul>
+              <li>Pause collection activities</li>
+              <li>Relief during tough times</li>
+              <li>Reassess when finances improve</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section">
+      <div class="section-container">
+        <h2 class="section-title">Real Stories of Tax Peace</h2>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>"I owed $85,000 to the IRS and was about to lose my house. Tax Peace Now negotiated an offer in compromise for just $12,000. I can finally sleep at night!"</p>
+            </div>
+            <div class="testimonial-author">
+              <strong>Sarah M.</strong>
+              <span>Small Business Owner</span>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>"They stopped my wage garnishment within 24 hours and set up a payment plan I could actually afford. Professional and compassionate service."</p>
+            </div>
+            <div class="testimonial-author">
+              <strong>Michael R.</strong>
+              <span>Construction Worker</span>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-content">
+              <p>"After 8 years of unfiled returns and mounting penalties, they helped me get compliant and negotiated away most of the penalties. Life-changing!"</p>
+            </div>
+            <div class="testimonial-author">
+              <strong>Jennifer L.</strong>
+              <span>Freelance Designer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-us-section">
+      <div class="section-container">
+        <h2 class="section-title">Why Choose Tax Peace Now?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#9ACD32"/>
+              </svg>
+            </div>
+            <h3>Licensed Professionals</h3>
+            <p>Our team includes enrolled agents, CPAs, and tax attorneys</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM10 17L6 13L7.41 11.59L10 14.17L16.59 7.58L18 9L10 17Z" fill="#9ACD32"/>
+              </svg>
+            </div>
+            <h3>No Upfront Fees</h3>
+            <p>We only get paid when we successfully resolve your case</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 1L15.5 2.5L13 4L10.5 2.5L13 1ZM7 13C7 15.76 9.24 18 12 18S17 15.76 17 13H15C15 14.66 13.66 16 12 16S9 14.66 9 13H7ZM12 4.5C16.97 4.5 21 8.53 21 13.5H19C19 9.64 15.86 6.5 12 6.5S5 9.64 5 13.5H3C3 8.53 7.03 4.5 12 4.5Z" fill="#9ACD32"/>
+              </svg>
+            </div>
+            <h3>Fast Response</h3>
+            <p>We contact you within 24 hours and can stop collections immediately</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM6 9H18V11H6V9ZM14 14H6V12H14V14ZM18 8H6V6H18V8Z" fill="#9ACD32"/>
+              </svg>
+            </div>
+            <h3>Direct Communication</h3>
+            <p>Speak directly with your assigned tax professional, not a call center</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-container">
+        <h2 class="cta-title">Ready to Find Your Tax Peace?</h2>
+        <p class="cta-subtitle">Don't wait - every day you delay costs you more in penalties and interest</p>
+        <button class="cta-button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+          Get Your Free Assessment Now
+        </button>
+        <p class="cta-disclaimer">No obligation • Completely confidential • Licensed professionals</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-section">
+      <div class="footer-container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h3>Tax Peace Now</h3>
+            <p>Professional tax resolution services helping Americans find peace from tax problems.</p>
+          </div>
+          <div class="footer-contact">
+            <h4>Get Help Today</h4>
+            <p>Licensed tax professionals standing by</p>
+            <button class="footer-cta" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+              Start Your Free Assessment
+            </button>
+          </div>
+        </div>
+        <div class="footer-legal">
+          <p><strong>Tax Resolution Disclaimer:</strong> This is a tax resolution service providing assistance with IRS tax debt. We are licensed tax professionals. Results vary and are not guaranteed. Some restrictions may apply.</p>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Do Not Sell My Info</a>
+            <a href="#" class="footer-link">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="assets/wizard.js"></script>
+  <script>
+    // Dock height + iOS keyboard handling + bottom sheet
+    (function(){
+      const root = document.documentElement;
+      const dock = document.getElementById('dock');
+      function setDockHeight(){
+        const h = dock.offsetHeight || 100;
+        root.style.setProperty('--dock-h', h + 'px');
+      }
+      setDockHeight();
+      window.addEventListener('resize', setDockHeight);
+      new ResizeObserver(setDockHeight).observe(dock);
+      if (window.visualViewport){
+        visualViewport.addEventListener('resize', () => {
+          const bottomInset = Math.max(0, (window.innerHeight - visualViewport.height - visualViewport.offsetTop));
+          dock.style.transform = bottomInset ? 'translateY(-'+ bottomInset +'px)' : 'translateY(0)';
+        });
+      }
+      const overlay = document.getElementById('sheetOverlay');
+      const sheet = document.getElementById('sheet');
+      function openSheet(){ overlay.style.opacity='1'; overlay.style.pointerEvents='auto'; sheet.classList.add('open'); }
+      function closeSheet(){ overlay.style.opacity='0'; overlay.style.pointerEvents='none'; sheet.classList.remove('open'); }
+      document.getElementById('closeSheet').addEventListener('click', closeSheet);
+      document.getElementById('ackSheet').addEventListener('click', closeSheet);
+      overlay.addEventListener('click', closeSheet);
+    })();
+  </script>
+</body>
+</html>
