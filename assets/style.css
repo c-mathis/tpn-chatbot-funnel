@@ -1092,10 +1092,16 @@ h1, .h1 {
 
 .option .label {
   flex: 1;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ink);
-  font-size: var(--body-xl-size);
+  font-size: var(--body-size);
   text-align: left;
+}
+
+@media (max-width: 480px) {
+  .option .label {
+    font-size: var(--body-sm-size);
+  }
 }
 
 /* Form Error Styles */
