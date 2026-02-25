@@ -714,24 +714,11 @@ async function submit() {
 
   // Track form submission with Meta pixel (with Advanced Matching)
   if (typeof fbq !== 'undefined') {
-    // Standard event (working)
     fbq('track', 'CompleteRegistration', {
       content_name: 'Tax Peace Assessment',
       status: 'complete'
     }, {
       event_id: eventId,
-      em: data.email?.toLowerCase(),
-      ph: data.phone?.replace(/\D/g, ''),
-      fn: data.firstName?.toLowerCase(),
-      ln: data.lastName?.toLowerCase()
-    });
-
-    // Custom event (testing)
-    fbq('trackCustom', 'tpnLead', {
-      content_name: 'Tax Peace Assessment',
-      content_category: 'tax_help'
-    }, {
-      event_id: eventId + '_tpn',
       em: data.email?.toLowerCase(),
       ph: data.phone?.replace(/\D/g, ''),
       fn: data.firstName?.toLowerCase(),
