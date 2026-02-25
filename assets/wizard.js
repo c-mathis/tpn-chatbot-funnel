@@ -232,6 +232,15 @@ const progressBar = document.getElementById('progressBar');
 
 const params = new URLSearchParams(location.search);
 
+// Meta tracking - capture fbclid and cookies for better attribution
+const fbclid = params.get('fbclid') || '';
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : '';
+};
+const fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
+const fbp = getCookie('_fbp') || '';
+
 // === Google Apps Script integration ===
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfDJy9Lfk5sZQsA6ccMJOf2XTvcNAeoMHdb7JhKqHtKQ6cYMUkLnuKKZMVyehTS4Hd/exec';
 const NOTIFY_EMAILS = 'cameron@axesagency.com';
@@ -695,18 +704,25 @@ async function submit() {
     ...data,
     ts: new Date().toISOString(),
     source: 'Tax Peace Now Chatbot',
-    page_url: window.location.href
+    page_url: window.location.href,
+    fbclid: fbclid,
+    fbc: fbc,
+    fbp: fbp
   };
 
   const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  // Track form submission with Meta pixel
+  // Track form submission with Meta pixel (with Advanced Matching)
   if (typeof fbq !== 'undefined') {
     fbq('track', 'CompleteRegistration', {
       content_name: 'Tax Peace Assessment',
       status: 'complete'
     }, {
-      event_id: eventId
+      event_id: eventId,
+      em: data.email?.toLowerCase(),
+      ph: data.phone?.replace(/\D/g, ''),
+      fn: data.firstName?.toLowerCase(),
+      ln: data.lastName?.toLowerCase()
     });
   }
 

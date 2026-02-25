@@ -25,7 +25,7 @@ export default {
       // Extract lead data
       const {
         firstName,
-        lastName, 
+        lastName,
         email,
         phone,
         debt_amount,
@@ -34,7 +34,10 @@ export default {
         collection_actions,
         unfiled_years,
         contactTime,
-        source = 'Tax Peace Now Chatbot'
+        source = 'Tax Peace Now Chatbot',
+        fbclid,
+        fbc,
+        fbp
       } = data;
 
       // Get client IP and user agent
@@ -43,9 +46,9 @@ export default {
                       '127.0.0.1';
       const userAgent = request.headers.get('User-Agent') || '';
       
-      // Generate event ID for deduplication (same as client-side)
-      const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+      // Use event ID from client for deduplication
+      const eventId = data.event_id;
+
       // Hash email and phone for privacy
       const hashedEmail = await hashData(email?.toLowerCase());
       const hashedPhone = await hashData(phone?.replace(/\D/g, ''));
@@ -54,7 +57,7 @@ export default {
       const conversionPayload = {
         data: [
           {
-            event_name: 'Lead',
+            event_name: 'CompleteRegistration',
             event_time: Math.floor(Date.now() / 1000),
             event_id: eventId,
             event_source_url: data.page_url || 'https://taxpeacenow.com',
@@ -66,6 +69,8 @@ export default {
               ln: [await hashData(lastName?.toLowerCase())],
               client_ip_address: clientIp,
               client_user_agent: userAgent,
+              fbc: fbc || undefined,
+              fbp: fbp || undefined,
             },
             custom_data: {
               content_name: 'Tax Resolution Assessment',
