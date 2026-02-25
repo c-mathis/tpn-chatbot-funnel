@@ -321,6 +321,9 @@ body {
   line-height: var(--body-line-height);
   letter-spacing: var(--body-letter-spacing);
   overflow-x: hidden;
+  overscroll-behavior-y: none; /* Prevent rubber-band bounce */
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+  scroll-snap-type: y proximity; /* Smooth snap between sections */
 }
 
 /* Light section helpers that work with existing CSS tokens */
@@ -1481,6 +1484,8 @@ h1, .h1 {
   background: #FEFEFE;
   font-family: var(--font-family);
   overflow: hidden; /* Prevent any page-level scrolling */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .chat-area {
@@ -2297,6 +2302,7 @@ summary::marker {
 .landing-content {
   background: var(--bg);
   min-height: 100vh;
+  scroll-snap-align: start;
 }
 
 /* Common Section Styles */
