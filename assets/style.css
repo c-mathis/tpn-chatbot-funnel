@@ -2682,6 +2682,10 @@ summary::marker {
   margin-top: 0;
 }
 
+.feature-icon svg path {
+  fill: #F29F05;
+}
+
 .feature-card h3 {
   font-size: 0.95rem;
   font-weight: 700;
