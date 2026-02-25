@@ -2893,7 +2893,7 @@ summary::marker {
 
 /* Footer */
 .footer-section {
-  background: var(--ink);
+  background: #66110b;
   color: white;
   padding: 60px 0 40px;
 }
@@ -2917,6 +2917,12 @@ summary::marker {
   font-weight: 600;
   margin-bottom: 1rem;
   color: var(--highlight);
+}
+
+.footer-logo {
+  height: 50px;
+  width: auto;
+  margin-bottom: 1rem;
 }
 
 .footer-brand p {
