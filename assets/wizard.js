@@ -702,11 +702,10 @@ async function submit() {
 
   // Track form submission with Meta pixel
   if (typeof fbq !== 'undefined') {
-    fbq('track', 'Lead', {
+    fbq('trackCustom', 'tpnLead', {
       content_name: 'Tax Peace Assessment',
       content_category: 'tax_help',
-      value: data.tax_problem || 'unknown',
-      currency: 'USD'
+      value: data.tax_problem || 'unknown'
     }, {
       event_id: eventId
     });
