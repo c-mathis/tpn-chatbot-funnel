@@ -11,7 +11,7 @@ const QUESTIONS = {
       'I have unfiled tax returns',
       'I received a notice from the IRS or am being audited',
       'I need help filing or organizing my taxes',
-      'I\'m not sure'
+      'I\'m not sure — I just know I need help'
     ],
     required: true
   },
@@ -19,10 +19,10 @@ const QUESTIONS = {
   // === Back Taxes Branch ===
   back_taxes_amount: {
     id: 'back_taxes_amount',
-    type: 'pills',
+    type: 'select',
     title: 'Approximately how much do you owe?',
     sub: 'Select your best estimate.',
-    options: ['Under $10,000', '$10,000–$25,000', '$25,000–$50,000', '$50,000–$100,000', 'Over $100,000', 'Not sure'],
+    options: ['$0 - $10,000', '$10,001 - $20,000', '$20,001 - $30,000', '$30,001 - $40,000', '$40,001 - $50,000', '$50,000 - $75,000', '$75,000 - $100,000', '$100,001 - $199,999', '$200,000 - $300,000', '$300,000 - $400,000', '$400,000 - $500,000'],
     required: true
   },
   back_taxes_actions: {
@@ -30,7 +30,7 @@ const QUESTIONS = {
     type: 'multi',
     title: 'Have you received any of the following?',
     sub: 'Select all that apply.',
-    options: ['Wage garnishment', 'Bank levy', 'Tax lien', 'Payment demand letter', 'None yet'],
+    options: ['Wage garnishment or bank levy', 'Tax lien', 'IRS notice or letter', 'None yet'],
     required: true
   },
   back_taxes_payment_plan: {
@@ -48,7 +48,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'What type of notice did you receive?',
     sub: 'Select the closest match.',
-    options: ['Balance due notice', 'Audit notice', 'Collections warning', 'CP2000', 'Not sure'],
+    options: ['Balance due or collections', 'Audit notice', 'CP2000 or other', 'Not sure'],
     required: true
   },
   notice_deadline: {
@@ -99,7 +99,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'Are you filing as:',
     sub: '',
-    options: ['Individual', 'Married filing jointly', 'Self-employed', 'Have rental properties', 'Own a business'],
+    options: ['Individual', 'Married filing jointly', 'Self-employed', 'Business owner'],
     required: true
   },
   filed_last_year: {
@@ -125,7 +125,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'What is your business structure?',
     sub: '',
-    options: ['Sole Proprietor', 'LLC', 'S-Corp', 'C-Corp', 'Partnership', 'Not sure'],
+    options: ['Sole Proprietor', 'LLC', 'Corporation', 'Not sure'],
     required: true
   },
   payroll_taxes_behind: {
@@ -209,14 +209,14 @@ const QUESTIONS = {
 
 // Define the flow paths based on tax_problem answer
 const FLOWS = {
-  'I owe money to the IRS or state': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
-  'I have unfiled tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
-  'I received a notice from the IRS or am being audited': ['notice_type', 'notice_deadline', 'notice_amount'],
-  'I need help filing or organizing my taxes': ['filing_status', 'filed_last_year', 'expect_owe_refund'],
-  'I\'m not sure': ['not_sure_clarify']
+  'I owe money to the IRS or state': ['back_taxes_amount', 'back_taxes_actions'],
+  'I have unfiled tax returns': ['unfiled_years', 'unfiled_self_employed'],
+  'I received a notice from the IRS or am being audited': ['notice_type', 'notice_deadline'],
+  'I need help filing or organizing my taxes': ['filing_status', 'expect_owe_refund'],
+  'I\'m not sure — I just know I need help': ['not_sure_clarify']
 };
 
-const UNIVERSAL_STEPS = ['state', 'tax_jurisdiction', 'contact'];
+const UNIVERSAL_STEPS = ['state', 'contact'];
 
 // DOM elements
 const stepLabel = document.getElementById('stepLabel');
@@ -268,7 +268,8 @@ function getCurrentStep() {
 
 function getTotalSteps() {
   buildPath();
-  return currentPath.length;
+  // Most flows have 5 steps, show that as minimum for consistent UX
+  return Math.max(currentPath.length, 5);
 }
 
 function setProgress() {
@@ -435,7 +436,8 @@ function buildControlsForStep(s) {
 
     const sel = document.createElement('select');
     sel.className = 'select';
-    sel.innerHTML = `<option value="" disabled selected>Select your state</option>` +
+    const placeholderText = s.id === 'state' ? 'Select your state' : 'Select an option';
+    sel.innerHTML = `<option value="" disabled selected>${placeholderText}</option>` +
       s.options.map(o => `<option value="${o}">${o}</option>`).join('');
     if (data[s.id]) sel.value = data[s.id];
 
