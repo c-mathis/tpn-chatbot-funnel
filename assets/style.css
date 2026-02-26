@@ -1509,7 +1509,7 @@ h1, .h1 {
   letter-spacing: var(--display-lg-letter-spacing);
   margin: 1rem 0;
   color: var(--surface);
-  text-align: left;
+  text-align: center;
   line-height: 1;
   white-space: nowrap;
   width: 100%;
