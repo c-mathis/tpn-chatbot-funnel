@@ -10,7 +10,8 @@ const QUESTIONS = {
       'I owe money to the IRS or state',
       'I have unfiled tax returns',
       'I received a notice from the IRS or am being audited',
-      'I need help filing or organizing my taxes'
+      'I need help filing or organizing my taxes',
+      'I\'m not sure'
     ],
     required: true
   },
@@ -176,7 +177,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'Which of these sounds closest to your situation?',
     sub: '',
-    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'Still not sure'],
+    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'I need help filing'],
     required: true
   },
 
@@ -211,7 +212,8 @@ const FLOWS = {
   'I owe money to the IRS or state': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
   'I have unfiled tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
   'I received a notice from the IRS or am being audited': ['notice_type', 'notice_deadline', 'notice_amount'],
-  'I need help filing or organizing my taxes': ['filing_status', 'filed_last_year', 'expect_owe_refund']
+  'I need help filing or organizing my taxes': ['filing_status', 'filed_last_year', 'expect_owe_refund'],
+  'I\'m not sure': ['not_sure_clarify']
 };
 
 const UNIVERSAL_STEPS = ['state', 'tax_jurisdiction', 'contact'];
