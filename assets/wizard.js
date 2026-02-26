@@ -10,7 +10,7 @@ const QUESTIONS = {
       'I owe money to the IRS or state',
       'I have unfiled tax returns',
       'I received a notice from the IRS or am being audited',
-      'I\'m not sure — I just need help'
+      'I need help filing or organizing my taxes'
     ],
     required: true
   },
@@ -211,7 +211,7 @@ const FLOWS = {
   'I owe money to the IRS or state': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
   'I have unfiled tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
   'I received a notice from the IRS or am being audited': ['notice_type', 'notice_deadline', 'notice_amount'],
-  'I\'m not sure — I just need help': ['not_sure_clarify']
+  'I need help filing or organizing my taxes': ['filing_status', 'filed_last_year', 'expect_owe_refund']
 };
 
 const UNIVERSAL_STEPS = ['state', 'tax_jurisdiction', 'contact'];
