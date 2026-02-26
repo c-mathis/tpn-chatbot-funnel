@@ -7,13 +7,10 @@ const QUESTIONS = {
     title: 'What best describes your current tax situation?',
     sub: 'Select the option that fits best.',
     options: [
-      'I owe back taxes and need help resolving it',
-      'I received a letter or notice from the IRS or state',
-      'I need to file past-due tax returns',
-      'I need help with this year\'s tax return',
-      'I need help with business taxes',
-      'I\'m being audited',
-      'I\'m not sure — I just know I need help'
+      'I owe money to the IRS or state',
+      'I have unfiled tax returns',
+      'I received a notice from the IRS or am being audited',
+      'I\'m not sure — I just need help'
     ],
     required: true
   },
@@ -179,7 +176,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'Which of these sounds closest to your situation?',
     sub: '',
-    options: ['I owe money', 'I haven\'t filed', 'I got a notice/letter', 'I need help filing this year', 'It\'s business-related', 'I\'m being audited', 'Still not sure'],
+    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'Still not sure'],
     required: true
   },
 
@@ -211,13 +208,10 @@ const QUESTIONS = {
 
 // Define the flow paths based on tax_problem answer
 const FLOWS = {
-  'I owe back taxes and need help resolving it': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
-  'I received a letter or notice from the IRS or state': ['notice_type', 'notice_deadline', 'notice_amount'],
-  'I need to file past-due tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
-  'I need help with this year\'s tax return': ['filing_status', 'filed_last_year', 'expect_owe_refund'],
-  'I need help with business taxes': ['business_structure', 'payroll_taxes_behind', 'business_operating'],
-  'I\'m being audited': ['audit_related', 'audit_deadline', 'audit_responded'],
-  'I\'m not sure — I just know I need help': ['not_sure_clarify']
+  'I owe money to the IRS or state': ['back_taxes_amount', 'back_taxes_actions', 'back_taxes_payment_plan'],
+  'I have unfiled tax returns': ['unfiled_years', 'unfiled_refund', 'unfiled_self_employed'],
+  'I received a notice from the IRS or am being audited': ['notice_type', 'notice_deadline', 'notice_amount'],
+  'I\'m not sure — I just need help': ['not_sure_clarify']
 };
 
 const UNIVERSAL_STEPS = ['state', 'tax_jurisdiction', 'contact'];
