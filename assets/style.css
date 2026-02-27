@@ -4145,3 +4145,78 @@ a.problem-card:hover h3 {
     font-size: 1rem;
   }
 }
+
+/* ==========================================================================
+   COMPARISON PAGE STYLES
+   ========================================================================== */
+
+.comparison-table-wrapper {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.comparison-table th {
+  background: var(--purp);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.comparison-table th:first-child {
+  border-radius: 14px 0 0 0;
+}
+
+.comparison-table th:last-child {
+  border-radius: 0 14px 0 0;
+}
+
+.comparison-table td {
+  font-size: 0.95rem;
+  color: var(--ink);
+  vertical-align: top;
+}
+
+.comparison-table td:first-child {
+  background: var(--bg);
+  font-weight: 500;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table tr:hover td {
+  background: rgba(6, 10, 105, 0.03);
+}
+
+.comparison-table tr:hover td:first-child {
+  background: var(--bg);
+}
+
+@media (max-width: 768px) {
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .comparison-table th {
+    font-size: 0.9rem;
+  }
+}
