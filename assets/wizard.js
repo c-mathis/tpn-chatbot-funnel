@@ -177,7 +177,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'Which of these sounds closest to your situation?',
     sub: '',
-    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'I need help filing', 'I just need to contact the IRS'],
+    options: ['I owe money', 'I haven\'t filed or need help filing', 'I got a notice or audit letter', 'I just need to contact the IRS'],
     required: true
   },
 
