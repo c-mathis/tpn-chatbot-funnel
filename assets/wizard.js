@@ -177,7 +177,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'Which of these sounds closest to your situation?',
     sub: '',
-    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'I need help filing'],
+    options: ['I owe money', 'I haven\'t filed', 'I got a notice or audit letter', 'I need help filing', 'I just need to contact the IRS'],
     required: true
   },
 
@@ -638,6 +638,15 @@ function advance(value) {
     return;
   }
 
+  // Filter out people just looking for IRS contact info
+  if (s.id === 'not_sure_clarify' && value === 'I just need to contact the IRS') {
+    addUserMessage(value);
+    setTimeout(() => {
+      showIrsContactInfo();
+    }, 400);
+    return;
+  }
+
   // Add user message
   const displayValue = Array.isArray(value) ? value.join(', ') : value;
   addUserMessage(displayValue);
@@ -755,6 +764,45 @@ async function submit() {
   const qp = new URLSearchParams({ name: data.firstName || 'Friend' });
   const utm = params && params.toString() ? '&' + params.toString() : '';
   location.href = 'thank-you.html?' + qp.toString() + utm;
+}
+
+// Show IRS contact info for people just looking to contact the IRS
+function showIrsContactInfo() {
+  clearPreviousConversation();
+
+  setTimeout(() => {
+    showBotMessage(
+      'Here\'s how to contact the IRS directly:',
+      '<strong>IRS Phone:</strong> <a href="tel:1-800-829-1040" style="color: var(--purp);">1-800-829-1040</a><br><strong>IRS Website:</strong> <a href="https://www.irs.gov" target="_blank" style="color: var(--purp);">irs.gov</a><br><br>If you have tax debt or need help resolving an IRS issue, we can help with that too.'
+    );
+
+    // Show option to continue if they actually need help
+    controls.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'options';
+
+    const helpBtn = document.createElement('button');
+    helpBtn.type = 'button';
+    helpBtn.className = 'option';
+    helpBtn.innerHTML = '<span class="mark">✓</span><span class="label">Actually, I do need help with a tax issue</span>';
+    helpBtn.addEventListener('click', () => {
+      addUserMessage('Actually, I do need help with a tax issue');
+      stepIndex = 0;
+      setTimeout(() => render(), 400);
+    });
+
+    wrap.appendChild(helpBtn);
+    controls.appendChild(wrap);
+
+    // Hide the Next button, show only Back
+    nextBtn.style.display = 'none';
+    backBtn.disabled = false;
+    backBtn.onclick = () => {
+      nextBtn.style.display = '';
+      stepIndex = 1; // Go back to not_sure_clarify
+      render();
+    };
+  }, 400);
 }
 
 // Initialize with a slight delay for the first question
