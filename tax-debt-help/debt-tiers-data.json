@@ -1,0 +1,541 @@
+{
+  "tiers": [
+    {
+      "amount": 5000,
+      "slug": "5000",
+      "displayAmount": "$5,000",
+      "title": "Owe the IRS $5,000? Here Are Your Options",
+      "metaTitle": "Owe IRS $5,000 - What Are My Options? | Tax Peace Now",
+      "metaDescription": "Owe the IRS $5,000? Learn about streamlined installment agreements, penalty abatement, and how to resolve $5K in tax debt without stress.",
+      "keywords": ["owe irs $5000", "can't pay $5000 to irs", "$5000 tax debt", "irs debt $5000 options"],
+      "heroSubtitle": "At this debt level, you have several straightforward options to resolve your tax debt quickly and affordably.",
+      "oicEligibility": {
+        "likelihood": "Low",
+        "explanation": "At $5,000, the IRS typically expects you to pay in full or through an installment agreement. Offer in Compromise is rarely accepted at this level unless you have extreme financial hardship.",
+        "typicalSettlement": null
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Guaranteed or Streamlined",
+        "typicalTerms": "12-36 months",
+        "monthlyPaymentRange": "$139-$417/month",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "You may qualify for a Guaranteed Installment Agreement if you owe under $10,000 and can pay within 3 years."
+      },
+      "enforcementActions": {
+        "likelihood": "Low to Moderate",
+        "actions": [
+          "IRS notices and letters",
+          "Federal tax lien possible but unlikely",
+          "Levy actions rare at this level"
+        ],
+        "explanation": "The IRS typically sends notices but rarely pursues aggressive collection for debts under $10,000."
+      },
+      "resolutionTimeline": {
+        "typical": "2-4 weeks",
+        "withProfessional": "1-2 weeks",
+        "notes": "Streamlined agreements can often be set up online or by phone relatively quickly."
+      },
+      "keyConsiderations": [
+        "Check if you qualify for the IRS Fresh Start program",
+        "Consider First-Time Penalty Abatement if eligible - could reduce your debt significantly",
+        "A Guaranteed Installment Agreement requires no financial disclosure",
+        "Paying by direct debit reduces your setup fee to $31",
+        "Interest continues to accrue during payment plan",
+        "Stay compliant with future tax obligations to avoid default"
+      ],
+      "bestOption": "Streamlined Installment Agreement",
+      "urgencyLevel": "low",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 10000,
+      "slug": "10000",
+      "displayAmount": "$10,000",
+      "title": "Owe the IRS $10,000? Your Complete Guide to Resolution",
+      "metaTitle": "Owe IRS $10,000 - Payment Plans & Relief Options | Tax Peace Now",
+      "metaDescription": "Struggling with $10,000 in IRS debt? Discover installment agreements, penalty relief, and Fresh Start options to resolve your tax debt.",
+      "keywords": ["owe irs $10000", "can't pay $10000 to irs", "$10000 tax debt", "irs $10k payment plan"],
+      "heroSubtitle": "This is the threshold where the IRS Fresh Start program really starts to help. Multiple resolution paths are available.",
+      "oicEligibility": {
+        "likelihood": "Low to Moderate",
+        "explanation": "OIC acceptance at $10,000 depends heavily on your financial situation. If your Reasonable Collection Potential is near zero, you might qualify.",
+        "typicalSettlement": "$1,000-$3,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Streamlined Installment Agreement",
+        "typicalTerms": "36-72 months",
+        "monthlyPaymentRange": "$139-$278/month",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "Streamlined agreements up to $50,000 require no financial statement or IRS approval process."
+      },
+      "enforcementActions": {
+        "likelihood": "Moderate",
+        "actions": [
+          "IRS notices escalate in severity",
+          "Notice of Federal Tax Lien more likely",
+          "Bank levy possible after final notice"
+        ],
+        "explanation": "At $10,000, the IRS begins to take collection more seriously. Expect a Notice of Intent to Levy if you ignore correspondence."
+      },
+      "resolutionTimeline": {
+        "typical": "2-6 weeks",
+        "withProfessional": "1-3 weeks",
+        "notes": "Most cases at this level can be resolved within a month with proper documentation."
+      },
+      "keyConsiderations": [
+        "Fresh Start Initiative raises streamlined agreement threshold - perfect for this debt level",
+        "Penalty abatement could reduce balance by 25% or more",
+        "Consider whether payoff within 72 months keeps you lien-free",
+        "If self-employed, quarterly estimates must be current to qualify",
+        "Interest and penalties continue during payment plan",
+        "Non-compliance defaults the agreement and reinstates full collection"
+      ],
+      "bestOption": "Streamlined Installment Agreement with Penalty Abatement",
+      "urgencyLevel": "moderate",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 15000,
+      "slug": "15000",
+      "displayAmount": "$15,000",
+      "title": "Owe the IRS $15,000? Options for Managing Your Tax Debt",
+      "metaTitle": "Owe IRS $15,000 - Relief Programs & Payment Options | Tax Peace Now",
+      "metaDescription": "Facing $15,000 in IRS tax debt? Learn about payment plans, Fresh Start, and whether you might qualify for an Offer in Compromise.",
+      "keywords": ["owe irs $15000", "can't pay $15000 to irs", "$15000 tax debt", "irs $15k what to do"],
+      "heroSubtitle": "A manageable amount with the right strategy. Most people resolve $15,000 in tax debt through payment plans or settlements.",
+      "oicEligibility": {
+        "likelihood": "Moderate",
+        "explanation": "At $15,000, Offer in Compromise becomes more viable for those with limited assets and income. The IRS may accept settlements of 20-30% in qualifying cases.",
+        "typicalSettlement": "$2,000-$5,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Streamlined Installment Agreement",
+        "typicalTerms": "36-72 months",
+        "monthlyPaymentRange": "$208-$417/month",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "Still qualifies for streamlined processing without detailed financial disclosure."
+      },
+      "enforcementActions": {
+        "likelihood": "Moderate",
+        "actions": [
+          "Notice of Federal Tax Lien likely",
+          "Intent to Levy notices",
+          "Passport certification possible (but threshold is $59,000+)"
+        ],
+        "explanation": "The IRS will file a lien at this level unless you enter a payment agreement. This affects your credit score."
+      },
+      "resolutionTimeline": {
+        "typical": "3-8 weeks",
+        "withProfessional": "2-4 weeks",
+        "notes": "Timeline depends on whether you pursue an installment agreement or explore OIC options."
+      },
+      "keyConsiderations": [
+        "Tax lien withdrawal is possible after Direct Debit agreement setup",
+        "OIC worth exploring if income is irregular or low",
+        "Currently Not Collectible status available if experiencing hardship",
+        "Ensure all returns are filed before requesting any resolution",
+        "Calculate whether penalty abatement meaningfully reduces your balance",
+        "Consider timing - liens filed before agreement affect credit differently"
+      ],
+      "bestOption": "Streamlined Installment Agreement or OIC Evaluation",
+      "urgencyLevel": "moderate",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 20000,
+      "slug": "20000",
+      "displayAmount": "$20,000",
+      "title": "Owe the IRS $20,000? Navigate Your Tax Relief Options",
+      "metaTitle": "Owe IRS $20,000 - Settlement & Payment Plan Options | Tax Peace Now",
+      "metaDescription": "Owe the IRS $20,000? Explore Offer in Compromise, installment agreements, and penalty abatement to resolve your tax debt strategically.",
+      "keywords": ["owe irs $20000", "can't pay $20000 to irs", "$20000 tax debt", "irs $20k relief options"],
+      "heroSubtitle": "At this level, it's worth evaluating all options including potential settlements. The right approach can save you thousands.",
+      "oicEligibility": {
+        "likelihood": "Moderate",
+        "explanation": "Offer in Compromise is increasingly attractive at $20,000. If your Reasonable Collection Potential is less than the debt, the IRS will consider a settlement.",
+        "typicalSettlement": "$3,000-$8,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Streamlined Installment Agreement",
+        "typicalTerms": "48-72 months",
+        "monthlyPaymentRange": "$278-$417/month",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "Streamlined process still available. Consider Direct Debit for lowest setup fee and potential lien withdrawal."
+      },
+      "enforcementActions": {
+        "likelihood": "Moderate to High",
+        "actions": [
+          "Federal Tax Lien filed",
+          "Notice of Intent to Levy",
+          "Potential wage garnishment after final notice",
+          "Bank account levy possible"
+        ],
+        "explanation": "The IRS prioritizes debts in this range. Without action, expect escalating collection efforts including levies."
+      },
+      "resolutionTimeline": {
+        "typical": "4-12 weeks for installment agreement, 6-12 months for OIC",
+        "withProfessional": "2-6 weeks for installment agreement, 4-9 months for OIC",
+        "notes": "OIC adds significant time but may be worth it depending on your financial situation."
+      },
+      "keyConsiderations": [
+        "Run the numbers on OIC vs. installment - professional analysis recommended",
+        "Partial Pay Installment Agreement available if can't afford minimum payment",
+        "Currently Not Collectible if experiencing financial hardship",
+        "State tax debt may also need addressing",
+        "Spouse liability - Innocent Spouse Relief may apply if applicable",
+        "Self-employed? Ensure quarterly estimates are current before applying"
+      ],
+      "bestOption": "Professional Evaluation for OIC vs. Installment Agreement",
+      "urgencyLevel": "moderate",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 25000,
+      "slug": "25000",
+      "displayAmount": "$25,000",
+      "title": "Owe the IRS $25,000? Your Path to Tax Debt Resolution",
+      "metaTitle": "Owe IRS $25,000 - Settlements & Relief Programs | Tax Peace Now",
+      "metaDescription": "Facing $25,000 in IRS tax debt? Learn when Offer in Compromise makes sense vs. payment plans, plus strategies to minimize what you pay.",
+      "keywords": ["owe irs $25000", "can't pay $25000 to irs", "$25000 tax debt", "irs $25k settlement"],
+      "heroSubtitle": "This is a pivotal amount where strategic planning matters. The difference between payment plans and settlements can save you tens of thousands.",
+      "oicEligibility": {
+        "likelihood": "Moderate to Good",
+        "explanation": "At $25,000, many taxpayers find Offer in Compromise worth pursuing. If your income is limited or you lack significant assets, settlements of 15-30% are common.",
+        "typicalSettlement": "$4,000-$10,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Streamlined Installment Agreement",
+        "typicalTerms": "60-72 months",
+        "monthlyPaymentRange": "$347-$417/month",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "Maximum Fresh Start streamlined limit is $50,000 - you're well within this threshold."
+      },
+      "enforcementActions": {
+        "likelihood": "High",
+        "actions": [
+          "Federal Tax Lien virtually certain without agreement",
+          "Wage garnishment (up to 25% of disposable income)",
+          "Bank levy",
+          "Property seizure in extreme cases",
+          "Social Security benefits can be levied (up to 15%)"
+        ],
+        "explanation": "At $25,000, the IRS assigns your case to active collection. Expect aggressive action if you don't respond to notices."
+      },
+      "resolutionTimeline": {
+        "typical": "4-12 weeks for installment agreement, 6-12 months for OIC",
+        "withProfessional": "2-6 weeks for installment agreement, 4-9 months for OIC",
+        "notes": "Professional representation often speeds up the process and improves outcomes."
+      },
+      "keyConsiderations": [
+        "At $25K, the cost-benefit of OIC becomes significant - potential savings of $15K+",
+        "Fresh Start lien threshold ($25,000 for individuals) - critical to stay within",
+        "Partial Pay Installment Agreement if standard payment is unaffordable",
+        "Audit reconsideration if you believe the debt is incorrect",
+        "Bankruptcy may discharge some tax debt (consult professional)",
+        "Collection Statute of Limitations - 10 years from assessment date"
+      ],
+      "bestOption": "OIC Evaluation with Installment Backup Plan",
+      "urgencyLevel": "high",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 50000,
+      "slug": "50000",
+      "displayAmount": "$50,000",
+      "title": "Owe the IRS $50,000? Serious Tax Debt Requires Strategic Action",
+      "metaTitle": "Owe IRS $50,000 - Settlements, Payment Plans & Relief | Tax Peace Now",
+      "metaDescription": "Overwhelmed by $50,000 in IRS debt? Learn about Offer in Compromise, installment options, and how to avoid wage garnishment and levies.",
+      "keywords": ["owe irs $50000", "can't pay $50000 to irs", "$50000 tax debt", "irs $50k help", "owe irs $50,000 what are my options"],
+      "heroSubtitle": "At $50,000, every decision matters. The right strategy can literally save you tens of thousands of dollars.",
+      "oicEligibility": {
+        "likelihood": "Good",
+        "explanation": "Offer in Compromise is often the best option at this debt level. The IRS regularly accepts settlements of 10-25% for qualifying taxpayers.",
+        "typicalSettlement": "$5,000-$15,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Streamlined or Standard Installment Agreement",
+        "typicalTerms": "72-120 months (with CSED consideration)",
+        "monthlyPaymentRange": "$417-$694/month minimum",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "$50,000 is the Fresh Start streamlined limit. Above this requires financial disclosure (Form 433-F)."
+      },
+      "enforcementActions": {
+        "likelihood": "Very High",
+        "actions": [
+          "Federal Tax Lien filed",
+          "Wage garnishment",
+          "Bank account levy",
+          "Accounts receivable seizure for business owners",
+          "Property seizure possible",
+          "Passport denial (threshold is $59,000)"
+        ],
+        "explanation": "This debt level triggers priority collection status. Revenue Officers may be assigned to your case."
+      },
+      "resolutionTimeline": {
+        "typical": "6-16 weeks for installment agreement, 6-12 months for OIC",
+        "withProfessional": "3-8 weeks for installment agreement, 4-9 months for OIC",
+        "notes": "Complex cases at this level often benefit significantly from professional representation."
+      },
+      "keyConsiderations": [
+        "You're at the maximum Fresh Start streamlined threshold - act before penalties push you over",
+        "Potential OIC savings of $35,000+ make professional fees worthwhile",
+        "Consider Currently Not Collectible if facing genuine hardship",
+        "Trust Fund Recovery Penalty if you're a business owner - personal liability for payroll taxes",
+        "State tax liens often accompany federal - address both",
+        "Spousal liability evaluation if married"
+      ],
+      "bestOption": "Professional OIC Analysis with Installment Fallback",
+      "urgencyLevel": "high",
+      "freshStartEligible": true
+    },
+    {
+      "amount": 75000,
+      "slug": "75000",
+      "displayAmount": "$75,000",
+      "title": "Owe the IRS $75,000? How to Resolve Major Tax Debt",
+      "metaTitle": "Owe IRS $75,000 - Expert Settlement & Relief Strategies | Tax Peace Now",
+      "metaDescription": "Facing $75,000 in IRS tax debt? Understand your Offer in Compromise potential, installment options, and how to stop aggressive collection.",
+      "keywords": ["owe irs $75000", "can't pay $75000 to irs", "$75000 tax debt", "irs $75k settlement options"],
+      "heroSubtitle": "Major tax debt requires a strategic approach. At this level, professional guidance typically pays for itself many times over.",
+      "oicEligibility": {
+        "likelihood": "Good to High",
+        "explanation": "Offer in Compromise is strongly recommended at $75,000 for eligible taxpayers. Settlements of 10-20% are common, representing savings of $60,000+.",
+        "typicalSettlement": "$7,500-$20,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Standard Installment Agreement (requires Form 433-F)",
+        "typicalTerms": "72-120 months",
+        "monthlyPaymentRange": "$625-$1,042/month minimum (varies by ability to pay)",
+        "setupFee": "$31-$225 depending on payment method",
+        "notes": "Above $50,000 requires financial disclosure. IRS will analyze your ability to pay."
+      },
+      "enforcementActions": {
+        "likelihood": "Very High - Aggressive Collection",
+        "actions": [
+          "Federal Tax Lien filed and enforced",
+          "Wage garnishment (continuous levy)",
+          "Multiple bank levies",
+          "Accounts receivable and inventory seizure",
+          "Real property liens and potential seizure",
+          "Passport denial/revocation"
+        ],
+        "explanation": "At $75,000, you're likely assigned to a Revenue Officer who has significant power to collect. They can seize assets directly."
+      },
+      "resolutionTimeline": {
+        "typical": "8-20 weeks for installment agreement, 6-14 months for OIC",
+        "withProfessional": "4-10 weeks for installment agreement, 5-10 months for OIC",
+        "notes": "Revenue Officer cases often move faster once properly engaged."
+      },
+      "keyConsiderations": [
+        "Passport implications - at $59,000+ the State Department certifies seriously delinquent debt",
+        "Potential OIC savings of $55,000-$67,500 justify professional representation",
+        "Trust Fund Recovery Penalty for business owners - officers/employees personally liable",
+        "Collection Due Process rights - request a hearing before levy",
+        "Wage garnishment leaves only minimal exempt income",
+        "10-year Collection Statute - strategic timing may help",
+        "Consider Partial Pay Installment Agreement if full payment impossible"
+      ],
+      "bestOption": "Professional OIC Application or Negotiated Installment",
+      "urgencyLevel": "critical",
+      "freshStartEligible": false
+    },
+    {
+      "amount": 100000,
+      "slug": "100000",
+      "displayAmount": "$100,000",
+      "title": "Owe the IRS $100,000? Your Guide to Resolving Six-Figure Tax Debt",
+      "metaTitle": "Owe IRS $100,000 - Settlement Options for Major Tax Debt | Tax Peace Now",
+      "metaDescription": "Owe the IRS $100,000 or more? Learn about Offer in Compromise, installment agreements, and strategies to resolve significant tax debt.",
+      "keywords": ["owe irs $100000", "can't pay $100000 to irs", "$100000 tax debt", "irs $100k settlement", "six figure tax debt"],
+      "heroSubtitle": "Six-figure tax debt is serious but solvable. Many Americans in your situation have successfully resolved their debt for a fraction of what they owed.",
+      "oicEligibility": {
+        "likelihood": "High",
+        "explanation": "At $100,000, Offer in Compromise is often the most effective path. The IRS regularly settles debts of this size for 10-15% when taxpayers genuinely cannot pay.",
+        "typicalSettlement": "$10,000-$25,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Standard Installment Agreement (Form 433-A/B required)",
+        "typicalTerms": "72-120 months",
+        "monthlyPaymentRange": "$833-$1,389/month minimum (based on RCP)",
+        "setupFee": "$31-$225",
+        "notes": "Full financial disclosure required. IRS will calculate your Reasonable Collection Potential to determine payments."
+      },
+      "enforcementActions": {
+        "likelihood": "Certain without Resolution",
+        "actions": [
+          "Revenue Officer assignment",
+          "Federal Tax Lien on all property",
+          "Continuous wage levy (garnishment)",
+          "Bank account levies",
+          "Business asset seizure",
+          "Real property seizure",
+          "Passport revocation",
+          "Referral to Department of Justice possible"
+        ],
+        "explanation": "Six-figure tax debt guarantees aggressive collection. The IRS may pursue asset seizure and has DOJ referral authority."
+      },
+      "resolutionTimeline": {
+        "typical": "3-6 months for installment agreement, 6-18 months for OIC",
+        "withProfessional": "6-12 weeks for installment agreement, 5-12 months for OIC",
+        "notes": "Complex cases at this level almost always benefit from professional representation."
+      },
+      "keyConsiderations": [
+        "DOJ referral threshold - IRS can refer cases over $100,000 to DOJ for civil suit",
+        "Potential OIC savings of $75,000-$90,000 far exceed professional fees",
+        "Criminal referral unlikely for non-willful non-payment (but fraud changes this)",
+        "Trust Fund penalties make officers/owners personally liable",
+        "Passport is already revoked at this level",
+        "Bankruptcy may discharge some portion - consult bankruptcy attorney",
+        "Multiple tax years likely involved - ensure all returns are filed",
+        "Interest accrual significant - $5,000-$8,000/year at current rates"
+      ],
+      "bestOption": "Professional OIC Application or Partial Pay Installment",
+      "urgencyLevel": "critical",
+      "freshStartEligible": false
+    },
+    {
+      "amount": 150000,
+      "slug": "150000",
+      "displayAmount": "$150,000",
+      "title": "Owe the IRS $150,000? Expert Strategies for Major Tax Debt",
+      "metaTitle": "Owe IRS $150,000 - Professional Settlement Help | Tax Peace Now",
+      "metaDescription": "Facing $150,000 in IRS debt? Professional help is essential. Learn about Offer in Compromise and strategies to resolve major tax debt.",
+      "keywords": ["owe irs $150000", "can't pay $150000 to irs", "$150000 tax debt", "major irs debt help"],
+      "heroSubtitle": "Debt of this magnitude requires expert handling. The right strategy can resolve your debt for a fraction of the balance.",
+      "oicEligibility": {
+        "likelihood": "High",
+        "explanation": "At $150,000, Offer in Compromise is almost always the recommended first approach. Settlements of 10-15% are common, potentially saving $127,000+.",
+        "typicalSettlement": "$15,000-$35,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Standard or Partial Pay Installment Agreement",
+        "typicalTerms": "72-120 months (CSED considerations critical)",
+        "monthlyPaymentRange": "$1,250-$2,083/month if full pay; less with Partial Pay",
+        "setupFee": "$31-$225",
+        "notes": "At this level, Partial Pay Installment Agreement may be necessary if OIC is declined."
+      },
+      "enforcementActions": {
+        "likelihood": "Immediate and Aggressive",
+        "actions": [
+          "Senior Revenue Officer assignment",
+          "All liens and levies active",
+          "Asset seizure proceedings",
+          "Business closure possible for payroll tax cases",
+          "Passport revoked",
+          "DOJ civil suit possible",
+          "Nominee/alter ego investigations"
+        ],
+        "explanation": "The IRS treats $150,000+ as major collection priority. Expect immediate action without professional intervention."
+      },
+      "resolutionTimeline": {
+        "typical": "4-8 months for installment, 8-18 months for OIC",
+        "withProfessional": "2-4 months for installment, 6-12 months for OIC",
+        "notes": "Professional representation is virtually essential at this debt level."
+      },
+      "keyConsiderations": [
+        "DOJ referral likely - civil suit authority over $100,000",
+        "OIC potential savings of $115,000-$135,000 make professional fees trivial",
+        "Nominee/fraudulent transfer investigations if assets moved",
+        "Business vs. personal liability analysis critical",
+        "Trust Fund penalties create officer/owner personal liability",
+        "State tax debt often accompanies - may be additional $20,000-$50,000",
+        "Criminal investigation unlikely without fraud indicators",
+        "10-year CSED strategic planning important"
+      ],
+      "bestOption": "Professional OIC with Comprehensive Tax Resolution Strategy",
+      "urgencyLevel": "critical",
+      "freshStartEligible": false
+    },
+    {
+      "amount": 200000,
+      "slug": "200000",
+      "displayAmount": "$200,000+",
+      "title": "Owe the IRS $200,000 or More? Resolving Severe Tax Debt",
+      "metaTitle": "Owe IRS $200,000+ - Expert Tax Debt Resolution | Tax Peace Now",
+      "metaDescription": "Owe the IRS $200,000 or more? Expert representation is essential. Learn about Offer in Compromise and strategies for severe tax debt.",
+      "keywords": ["owe irs $200000", "can't pay $200000 to irs", "$200000 tax debt", "severe tax debt help", "large irs debt"],
+      "heroSubtitle": "Severe tax debt requires expert handling - but resolution is absolutely possible. Thousands of Americans have settled debts of this magnitude.",
+      "oicEligibility": {
+        "likelihood": "High",
+        "explanation": "At $200,000+, Offer in Compromise is the primary strategy for most taxpayers. The IRS regularly accepts settlements of 5-15%, representing savings of $170,000 or more.",
+        "typicalSettlement": "$15,000-$50,000 if accepted"
+      },
+      "installmentAgreement": {
+        "recommended": true,
+        "type": "Partial Pay Installment Agreement",
+        "typicalTerms": "120 months or to CSED",
+        "monthlyPaymentRange": "Based on RCP calculation - varies widely",
+        "setupFee": "$31-$225",
+        "notes": "Full payment installment agreements are unrealistic for most at this level. Partial Pay or OIC are typical paths."
+      },
+      "enforcementActions": {
+        "likelihood": "Guaranteed without Action",
+        "actions": [
+          "Dedicated Revenue Officer with seizure authority",
+          "All liens and levies",
+          "Business asset seizure and potential closure",
+          "Real property seizure",
+          "Passport revocation",
+          "DOJ civil suit",
+          "Potential criminal referral if fraud indicators exist"
+        ],
+        "explanation": "Debt over $200,000 receives maximum IRS collection priority. Asset seizure is routine without professional intervention."
+      },
+      "resolutionTimeline": {
+        "typical": "6-12 months for complex resolution",
+        "withProfessional": "4-12 months depending on strategy",
+        "notes": "Multiple strategies often combined - OIC, installment, penalty abatement, lien subordination."
+      },
+      "keyConsiderations": [
+        "DOJ lawsuit authority is active - IRS can sue to collect",
+        "Criminal Investigation Division referral if fraud indicators (willful evasion, false returns)",
+        "Potential OIC savings of $150,000-$185,000 make expert representation essential",
+        "Asset protection analysis - proper vs. fraudulent transfers",
+        "Multiple entity liability if business owner",
+        "Trust Fund Recovery Penalty creates personal liability for payroll taxes",
+        "State tax debt typically substantial",
+        "Bankruptcy may discharge some debt - integrated planning required",
+        "CSED strategic planning for 10-year statute"
+      ],
+      "bestOption": "Comprehensive Professional Tax Resolution - OIC Primary Strategy",
+      "urgencyLevel": "critical",
+      "freshStartEligible": false
+    }
+  ],
+  "sharedContent": {
+    "disclaimer": "Tax Peace Now provides educational resources and assessments to help individuals understand their tax relief options. Results vary by individual circumstance. This site does not provide tax, legal, or financial advice.",
+    "ctaPrimary": "Start Free Assessment",
+    "ctaSecondary": "Check If You Qualify",
+    "commonFaqs": [
+      {
+        "question": "Will my debt go away after 10 years?",
+        "answer": "The IRS generally has 10 years from the date of assessment to collect tax debt (Collection Statute Expiration Date or CSED). However, the clock can be paused for various reasons including OIC applications, installment agreements, and time spent outside the U.S. It's important to understand your specific CSED dates."
+      },
+      {
+        "question": "Can I negotiate with the IRS myself?",
+        "answer": "Yes, you can represent yourself before the IRS. However, larger debts typically benefit from professional representation. Tax professionals understand IRS procedures, can often negotiate better outcomes, and prevent costly mistakes."
+      },
+      {
+        "question": "What happens if I can't afford my payment plan?",
+        "answer": "If your financial situation changes, you can request a modification to your installment agreement. Options include reducing monthly payments, temporary suspension, or transitioning to Currently Not Collectible status."
+      },
+      {
+        "question": "Will the IRS take my house?",
+        "answer": "The IRS can seize property but rarely seizes primary residences for tax debt. They must follow specific procedures and typically prefer other collection methods. Payment agreements usually prevent seizure actions."
+      },
+      {
+        "question": "Does tax debt affect my credit?",
+        "answer": "IRS tax liens are no longer reported to credit bureaus (since 2018). However, if the IRS files a federal tax lien, it becomes public record. While not on credit reports, lenders conducting manual reviews may discover it."
+      }
+    ]
+  }
+}

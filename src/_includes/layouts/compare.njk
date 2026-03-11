@@ -1,0 +1,49 @@
+---
+layout: layouts/base.njk
+bodyClass: service-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ title }}",
+  "description": "{{ description }}",
+  "publisher": { "@type": "Organization", "name": "{{ site.name }}" }
+}
+</script>
+{% if faqs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}
+    {
+      "@type": "Question",
+      "name": "{{ faq.question }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ faq.answer }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
+<main>
+  {{ content | safe }}
+
+  <!-- CTA Section -->
+  <section class="service-cta">
+    <div class="section-container">
+      <h2>{{ ctaTitle | default('Not Sure Which Option Fits Your Situation?') }}</h2>
+      <p>{{ ctaSubtitle | default('Take our free 2-minute assessment. We\'ll analyze your situation and help you understand which tax relief option makes the most sense for you.') }}</p>
+      <a href="{{ '/' | url }}" class="cta-button">Start Free Assessment</a>
+      <p class="cta-disclaimer">No obligation. 100% confidential.</p>
+    </div>
+  </section>
+</main>

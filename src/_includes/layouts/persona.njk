@@ -1,0 +1,42 @@
+---
+layout: layouts/base.njk
+bodyClass: service-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "{{ service }} for {{ persona }}",
+  "description": "{{ description }}",
+  "provider": { "@type": "Organization", "name": "{{ site.name }}", "url": "{{ site.url }}" },
+  "serviceType": "Tax Relief",
+  "areaServed": { "@type": "Country", "name": "United States" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "{{ service }}", "item": "{{ site.url }}/services/{{ serviceSlug }}.html" },
+    { "@type": "ListItem", "position": 3, "name": "For {{ persona }}", "item": "{{ site.url }}{{ page.url }}" }
+  ]
+}
+</script>
+{% endblock %}
+
+<main>
+  {{ content | safe }}
+
+  <!-- CTA Section -->
+  <section class="service-cta">
+    <div class="section-container">
+      <h2>Ready to Resolve Your Tax Situation?</h2>
+      <p>Take our free 2-minute assessment to understand your options.</p>
+      <a href="{{ '/' | url }}" class="cta-button">Start Free Assessment</a>
+      <p class="cta-disclaimer">No obligation. 100% confidential.</p>
+    </div>
+  </section>
+</main>

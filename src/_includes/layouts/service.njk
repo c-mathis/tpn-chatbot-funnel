@@ -1,0 +1,64 @@
+---
+layout: layouts/base.njk
+bodyClass: service-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "{{ title }}",
+  "description": "{{ description }}",
+  "provider": { "@type": "Organization", "name": "{{ site.name }}", "url": "{{ site.url }}" },
+  "serviceType": "Tax Relief",
+  "areaServed": { "@type": "Country", "name": "United States" }
+}
+</script>
+{% if faqs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}
+    {
+      "@type": "Question",
+      "name": "{{ faq.question }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ faq.answer }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+{% if showBreadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "Services", "item": "{{ site.url }}/services/" },
+    { "@type": "ListItem", "position": 3, "name": "{{ title }}", "item": "{{ site.url }}{{ page.url }}" }
+  ]
+}
+</script>
+{% endif %}
+{% endblock %}
+
+<main>
+  {{ content | safe }}
+
+  <!-- CTA Section -->
+  <section class="service-cta">
+    <div class="section-container">
+      <h2>{{ ctaTitle | default('Need Help With Your Tax Situation?') }}</h2>
+      <p>{{ ctaSubtitle | default('Take our free 2-minute assessment to understand your options.') }}</p>
+      <a href="{{ '/' | url }}" class="cta-button">Start Free Assessment</a>
+      <p class="cta-disclaimer">No obligation. 100% confidential.</p>
+    </div>
+  </section>
+</main>

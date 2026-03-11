@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ title }} | {{ site.name }}</title>
+  <link rel="stylesheet" href="{{ '/assets/style.css' | url }}">
+
+  {% include "partials/analytics.njk" %}
+</head>
+<body>
+  <header class="brandbar">
+    <div class="brandbar-inner">
+      <div class="brand-logo"><span style="font-weight:900;color:#7C3AED">Tax Peace Now</span></div>
+    </div>
+  </header>
+
+  {{ content | safe }}
+
+  <script>
+    // Get name from URL params
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    if (name) {
+      document.getElementById('userName').textContent = name;
+    }
+  </script>
+</body>
+</html>

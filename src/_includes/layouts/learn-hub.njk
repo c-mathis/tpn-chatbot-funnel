@@ -1,0 +1,49 @@
+---
+layout: layouts/base.njk
+bodyClass: service-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "{{ title }}",
+  "description": "{{ description }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site.name }}",
+    "url": "{{ site.url }}"
+  },
+  "mainEntity": {
+    "@type": "ItemList",
+    "name": "Tax Relief Topics",
+    "numberOfItems": 40
+  }
+}
+</script>
+{% endblock %}
+
+<main>
+
+  <!-- Hero -->
+  <section class="service-hero">
+    <div class="section-container">
+      <span class="service-label">{{ label | default("Education Center") }}</span>
+      <h1 class="service-hero-title">{{ title }}</h1>
+      <p class="service-hero-subtitle">{{ subtitle | default(description) }}</p>
+    </div>
+  </section>
+
+  {{ content | safe }}
+
+  <!-- CTA -->
+  <section class="service-cta">
+    <div class="section-container">
+      <h2>Have Questions About Your Situation?</h2>
+      <p>Take our free 2-minute assessment to understand your options and find the right path forward.</p>
+      <a href="{{ '/' | url }}" class="cta-button">Start Free Assessment</a>
+      <p class="cta-disclaimer">No obligation. 100% confidential.</p>
+    </div>
+  </section>
+
+</main>

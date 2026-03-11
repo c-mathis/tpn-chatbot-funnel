@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ title }} | {{ site.name }}</title>
+  <meta name="description" content="{{ description | default(site.description) }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | url }}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ ogTitle | default(title) }}">
+  <meta property="og:description" content="{{ ogDescription | default(description) | default(site.description) }}">
+  <meta property="og:type" content="{{ ogType | default('website') }}">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ ogImage | default(site.ogImage) }}">
+
+  {% block schema %}{% endblock %}
+
+  {% include "partials/analytics.njk" %}
+</head>
+<body{% if bodyClass %} class="{{ bodyClass }}"{% endif %}>
+  {% include "partials/nav.njk" %}
+
+  {% block content %}{{ content | safe }}{% endblock %}
+
+  {% include "partials/footer.njk" %}
+
+  {% include "partials/mobile-menu-script.njk" %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

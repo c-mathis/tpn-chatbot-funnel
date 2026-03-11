@@ -1,0 +1,306 @@
+---
+layout: layouts/base.njk
+title: Tax Peace Now - Blog
+description: Expert insights, tips, and strategies to help you navigate tax resolution and achieve financial peace of mind.
+bodyClass: blog-page-alt
+permalink: /blog-alt.html
+---
+{# Note: This page uses an alternate design with Tailwind CDN.
+   The main blog listing is at /blog/index.njk which uses the site styles. #}
+
+<style>
+  @font-face {
+    font-family: 'Inter';
+    src: url('https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2') format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+  }
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    content: [],
+    theme: {
+      extend: {
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          arial: ['Arial']
+        }
+      }
+    }
+  };
+</script>
+
+<main class="font-inter bg-white text-gray-900">
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-violet-600 to-gray-700 text-white py-16 md:py-24">
+    <div class="max-w-[1200px] mx-auto px-5 text-center">
+      <h1 class="text-4xl md:text-5xl font-black mb-4">Tax Peace Now Blog</h1>
+      <p class="text-lg md:text-xl opacity-90 max-w-[700px] mx-auto">
+        Expert insights, tips, and strategies to help you navigate tax resolution and achieve financial peace of mind.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured Post -->
+  <section class="bg-white py-12 md:py-16">
+    <div class="max-w-[1200px] mx-auto px-5">
+      <div class="bg-gradient-to-br from-violet-50 to-lime-50 rounded-3xl overflow-hidden border-2 border-slate-200">
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="p-8 md:p-12 flex flex-col justify-center">
+            <span class="inline-block bg-lime-400 text-gray-900 text-sm font-bold px-4 py-2 rounded-full mb-4 w-fit">Featured</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold mb-4">
+              5 Warning Signs You Need Tax Resolution Help
+            </h2>
+            <p class="text-zinc-600 text-lg mb-6 leading-relaxed">
+              Don't wait until it's too late. Learn the critical warning signs that indicate you need professional tax resolution assistance.
+            </p>
+            <div class="flex items-center gap-4 mb-6">
+              <span class="text-sm text-zinc-500">By Kirk Johnson</span>
+              <span class="text-zinc-300">*</span>
+              <span class="text-sm text-zinc-500">December 15, 2024</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read Full Article
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+          <div class="h-64 md:h-auto bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
+            <svg class="w-32 h-32 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Categories -->
+  <section class="bg-slate-50 py-8">
+    <div class="max-w-[1200px] mx-auto px-5">
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button class="px-6 py-2 bg-violet-600 text-white font-semibold rounded-full hover:bg-violet-700 transition-colors">
+          All Posts
+        </button>
+        <button class="px-6 py-2 bg-white text-gray-700 font-semibold rounded-full border-2 border-slate-200 hover:border-violet-600 hover:text-violet-600 transition-colors">
+          Tax Tips
+        </button>
+        <button class="px-6 py-2 bg-white text-gray-700 font-semibold rounded-full border-2 border-slate-200 hover:border-violet-600 hover:text-violet-600 transition-colors">
+          IRS Updates
+        </button>
+        <button class="px-6 py-2 bg-white text-gray-700 font-semibold rounded-full border-2 border-slate-200 hover:border-violet-600 hover:text-violet-600 transition-colors">
+          Success Stories
+        </button>
+        <button class="px-6 py-2 bg-white text-gray-700 font-semibold rounded-full border-2 border-slate-200 hover:border-violet-600 hover:text-violet-600 transition-colors">
+          Resolution Strategies
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Grid -->
+  <section class="bg-white py-12 md:py-20">
+    <div class="max-w-[1200px] mx-auto px-5">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Blog Post 1 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-lime-400/20 text-lime-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Tax Tips</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              Understanding Offer in Compromise: Is It Right for You?
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              Learn how the IRS Offer in Compromise program works and whether you qualify to settle your tax debt for less.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 12, 2024</span>
+              <span>5 min read</span>
+            </div>
+            <a href="{{ '/blog/what-is-an-offer-in-compromise/' | url }}" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Post 2 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full mb-3">IRS Updates</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              What to Do When You Receive an IRS Notice
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              Don't panic! Here's your step-by-step guide to handling IRS notices and protecting your rights.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 10, 2024</span>
+              <span>7 min read</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Post 3 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-lime-400 to-lime-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-lime-400/20 text-lime-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Success Stories</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              How Sarah Reduced Her $85K Tax Debt to $12K
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              A real success story of how one small business owner found tax peace through professional resolution services.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 8, 2024</span>
+              <span>6 min read</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Post 4 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-violet-100 text-violet-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Resolution Strategies</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              Installment Agreements: Your Path to Affordable Payments
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              Discover how IRS installment agreements can help you pay off tax debt with manageable monthly payments.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 5, 2024</span>
+              <span>8 min read</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Post 5 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-lime-400/20 text-lime-700 text-xs font-bold px-3 py-1 rounded-full mb-3">Tax Tips</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              Unfiled Tax Returns: How to Get Back on Track
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              Step-by-step guidance on catching up with unfiled returns and minimizing penalties in the process.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 3, 2024</span>
+              <span>9 min read</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Blog Post 6 -->
+        <article class="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+            <svg class="w-20 h-20 text-white opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <div class="p-6">
+            <span class="inline-block bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full mb-3">IRS Updates</span>
+            <h3 class="text-xl font-bold mb-3 leading-tight">
+              Wage Garnishment: How to Stop It Immediately
+            </h3>
+            <p class="text-zinc-600 text-sm mb-4 leading-relaxed">
+              Learn the legal strategies to halt IRS wage garnishment and protect your income right away.
+            </p>
+            <div class="flex items-center justify-between text-sm text-zinc-500 mb-4">
+              <span>Dec 1, 2024</span>
+              <span>6 min read</span>
+            </div>
+            <a href="#" class="inline-flex items-center text-violet-600 font-semibold hover:text-violet-700 transition-colors">
+              Read More
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex justify-center items-center gap-2 mt-12">
+        <button class="px-4 py-2 border-2 border-slate-200 rounded-lg text-zinc-500 hover:border-violet-600 hover:text-violet-600 transition-colors">
+          Previous
+        </button>
+        <button class="px-4 py-2 bg-violet-600 text-white rounded-lg font-semibold">1</button>
+        <button class="px-4 py-2 border-2 border-slate-200 rounded-lg hover:border-violet-600 hover:text-violet-600 transition-colors">2</button>
+        <button class="px-4 py-2 border-2 border-slate-200 rounded-lg hover:border-violet-600 hover:text-violet-600 transition-colors">3</button>
+        <button class="px-4 py-2 border-2 border-slate-200 rounded-lg hover:border-violet-600 hover:text-violet-600 transition-colors">
+          Next
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-gradient-to-br from-violet-600 to-gray-700 text-white text-center py-16 md:py-20">
+    <div class="max-w-[800px] mx-auto px-5">
+      <h2 class="text-3xl md:text-4xl font-black mb-4">Need Help With Your Tax Situation?</h2>
+      <p class="text-lg md:text-xl opacity-90 mb-8">
+        Don't let tax problems keep you up at night. Get your free assessment today.
+      </p>
+      <a href="{{ '/' | url }}" class="inline-block bg-lime-400 text-gray-900 text-lg font-bold px-10 py-5 rounded-full hover:bg-lime-500 hover:shadow-lg transition-all">
+        Get Your Free Assessment Now
+      </a>
+      <p class="text-sm opacity-80 mt-4">No obligation * Completely confidential * Licensed professionals</p>
+    </div>
+  </section>
+</main>

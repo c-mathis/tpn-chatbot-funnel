@@ -1,0 +1,22 @@
+---
+layout: layouts/base.njk
+bodyClass: blog-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "{{ title }}",
+  "description": "{{ description }}",
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site.name }}"
+  }
+}
+</script>
+{% endblock %}
+
+<main>
+  {{ content | safe }}
+</main>

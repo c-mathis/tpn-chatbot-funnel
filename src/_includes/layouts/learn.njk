@@ -1,0 +1,79 @@
+---
+layout: layouts/base.njk
+bodyClass: learn-page
+---
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ title }}",
+  "description": "{{ description }}",
+  "author": { "@type": "Organization", "name": "{{ site.name }}" },
+  "publisher": { "@type": "Organization", "name": "{{ site.name }}", "logo": { "@type": "ImageObject", "url": "{{ site.logo }}" } }
+}
+</script>
+{% if faqs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {% for faq in faqs %}
+    {
+      "@type": "Question",
+      "name": "{{ faq.question }}",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "{{ faq.answer }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "Learn", "item": "{{ site.url }}/learn/" },
+    { "@type": "ListItem", "position": 3, "name": "{{ title }}", "item": "{{ site.url }}{{ page.url }}" }
+  ]
+}
+</script>
+{% endblock %}
+
+<main>
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <div class="section-container">
+      <a href="{{ '/' | url }}">Home</a> &rsaquo;
+      <a href="{{ '/learn/' | url }}">Learn</a> &rsaquo;
+      <span>{{ title }}</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="service-hero">
+    <div class="section-container">
+      <span class="service-label">Tax Education</span>
+      <h1 class="service-hero-title">{{ title }}</h1>
+      <p class="service-hero-subtitle">{{ subtitle | default(description) }}</p>
+    </div>
+  </section>
+
+  {{ content | safe }}
+
+  <!-- CTA Section -->
+  <section class="service-cta">
+    <div class="section-container">
+      <h2>Need Help With Your Tax Situation?</h2>
+      <p>Take our free 2-minute assessment to understand your options.</p>
+      <a href="{{ '/' | url }}" class="cta-button">Start Free Assessment</a>
+      <p class="cta-disclaimer">No obligation. 100% confidential.</p>
+    </div>
+  </section>
+</main>

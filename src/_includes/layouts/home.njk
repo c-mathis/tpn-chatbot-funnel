@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ site.url }}{{ page.url }}">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | url }}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ ogTitle | default(title) }}">
+  <meta property="og:description" content="{{ ogDescription | default(description) }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.ogImage }}">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{ site.name }}",
+    "url": "{{ site.url }}",
+    "logo": "{{ site.logo }}",
+    "description": "{{ site.description }}",
+    "sameAs": [],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "areaServed": "US"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site.name }}",
+    "url": "{{ site.url }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ site.url }}/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  {% include "partials/analytics.njk" %}
+</head>
+<body>
+  <div class="chat-container">
+    <header class="brandbar">
+      <div class="brandbar-inner">
+        <div class="brand-logo"><img src="{{ '/assets/tax-peace-now-white-transparent.svg' | url }}" alt="Tax Peace Now" class="logo-img"></div>
+        <nav class="nav-menu" id="navMenu">
+          <div class="nav-dropdown">
+            <a href="#services" class="nav-link">Services <svg class="dropdown-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <div class="nav-dropdown-menu">
+              <a href="{{ '/services/tax-relief.html' | url }}">Tax Relief</a>
+              <a href="{{ '/services/offer-in-compromise.html' | url }}">Offer in Compromise</a>
+              <a href="{{ '/services/installment-agreement.html' | url }}">Installment Agreement</a>
+              <a href="{{ '/services/currently-not-collectible.html' | url }}">Currently Not Collectible</a>
+              <a href="{{ '/services/penalty-abatement.html' | url }}">Penalty Abatement</a>
+              <a href="{{ '/services/fresh-start-program.html' | url }}">Fresh Start Program</a>
+              <a href="{{ '/services/wage-garnishment.html' | url }}">Wage Garnishment</a>
+              <a href="{{ '/services/unfiled-tax-returns.html' | url }}">Unfiled Tax Returns</a>
+              <a href="{{ '/services/tax-preparation.html' | url }}">Tax Preparation</a>
+            </div>
+          </div>
+          <a href="#how-it-works" class="nav-link">How It Works</a>
+          <a href="#" class="nav-cta" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Get Started</a>
+        </nav>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+    <div class="chat-area">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot-message">
+        <div class="message-bubble">
+          <div class="message-title">Hi! I'm Kirk from Tax Peace Now</div>
+          <div class="message-subtitle">Let's find your path to tax peace. This takes 2 minutes and is completely confidential.</div>
+        </div>
+      </div>
+    </div>
+    <div class="character-presence">
+      <img src="{{ '/assets/tpn-character-transparent.png' | url }}" alt="Kirk" class="character-avatar" />
+    </div>
+  </div>
+
+  <div class="fixed-input-area" id="dock">
+    <div class="answer-section">
+      <div class="appbar">
+        <div class="appbar-inner">
+          <div class="app-meta"><span id="stepLabel">Step 1 of 6</span></div>
+        </div>
+      </div>
+      <div id="controls"></div>
+    </div>
+    <div class="chat-controls">
+      <button class="btn-chat ghost" type="button" id="backBtn">← Back</button>
+      <button class="btn-chat primary" type="button" id="nextBtn">Send ✌️</button>
+    </div>
+  </div>
+
+  <!-- Disclosures bottom sheet -->
+  <div class="sheet-overlay" id="sheetOverlay"></div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-header">
+      <div class="sheet-title">Important Disclosures</div>
+      <button class="btn ghost" id="closeSheet" type="button">Close</button>
+    </div>
+    <div class="sheet-body">
+      <p><strong>Disclaimer:</strong> Tax Peace Now provides educational resources and assessments to help individuals understand their tax relief options. Results vary by individual circumstance. This site does not provide tax, legal, or financial advice.</p>
+      <p>Tax Peace Now</p>
+      <p><a href="#" class="link">Privacy</a> • <a href="#" class="link">Terms</a> • <a href="#" class="link">Do Not Sell or Share</a> • <a href="#" class="link">Contact</a></p>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn primary" id="ackSheet" type="button">I Understand</button>
+    </div>
+  </div>
+  </div>
+
+  {{ content | safe }}
+
+  <script src="{{ '/assets/wizard.js' | url }}"></script>
+  <script>
+    // Dock height + iOS keyboard handling + bottom sheet
+    (function(){
+      const root = document.documentElement;
+      const dock = document.getElementById('dock');
+      function setDockHeight(){
+        const h = dock.offsetHeight || 100;
+        root.style.setProperty('--dock-h', h + 'px');
+      }
+      setDockHeight();
+      window.addEventListener('resize', setDockHeight);
+      new ResizeObserver(setDockHeight).observe(dock);
+      if (window.visualViewport){
+        visualViewport.addEventListener('resize', () => {
+          const bottomInset = Math.max(0, (window.innerHeight - visualViewport.height - visualViewport.offsetTop));
+          dock.style.transform = bottomInset ? 'translateY(-'+ bottomInset +'px)' : 'translateY(0)';
+        });
+      }
+      const overlay = document.getElementById('sheetOverlay');
+      const sheet = document.getElementById('sheet');
+      function openSheet(){ overlay.style.opacity='1'; overlay.style.pointerEvents='auto'; sheet.classList.add('open'); }
+      function closeSheet(){ overlay.style.opacity='0'; overlay.style.pointerEvents='none'; sheet.classList.remove('open'); }
+      document.getElementById('closeSheet').addEventListener('click', closeSheet);
+      document.getElementById('ackSheet').addEventListener('click', closeSheet);
+      overlay.addEventListener('click', closeSheet);
+    })();
+
+    {% include "partials/mobile-menu-script.njk" %}
+  </script>
+</body>
+</html>
