@@ -707,8 +707,12 @@ async function postToGoogle(payload) {
 }
 
 async function submit() {
+  // Get session from localStorage
+  const session = JSON.parse(localStorage.getItem('tpn_session') || '{}');
+
   const payload = {
     ...data,
+    session_id: session.session_id,
     ts: new Date().toISOString(),
     source: 'Tax Peace Now Chatbot',
     page_url: window.location.href,

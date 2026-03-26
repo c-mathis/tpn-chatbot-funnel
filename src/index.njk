@@ -342,3 +342,39 @@ permalink: /index.html
   </footer>
 
 </main>
+
+<script>
+(async function() {
+  try {
+    let sessionData = JSON.parse(localStorage.getItem('tpn_session') || '{}');
+
+    // If session expired or missing, get new assignment
+    if (!sessionData.session_id || isExpired(sessionData.assigned_at)) {
+      const response = await fetch('https://tpn-crm-api.YOUR_SUBDOMAIN.workers.dev/api/assign-visitor');
+      sessionData = await response.json();
+      sessionData.assigned_at = new Date().toISOString();
+      localStorage.setItem('tpn_session', JSON.stringify(sessionData));
+    }
+
+    // Update all phone numbers on page
+    const phone = sessionData.buyer_phone || '(800) 555-0000';
+    const phoneRaw = phone.replace(/[^0-9]/g, '');
+
+    document.querySelectorAll('[data-phone]').forEach(el => {
+      el.textContent = phone;
+      if (el.tagName === 'A') {
+        el.href = `tel:${phoneRaw}`;
+      }
+    });
+  } catch (error) {
+    console.error('Failed to assign visitor:', error);
+  }
+
+  function isExpired(timestamp) {
+    if (!timestamp) return true;
+    const assigned = new Date(timestamp);
+    const now = new Date();
+    return (now - assigned) > 24 * 60 * 60 * 1000;
+  }
+})();
+</script>

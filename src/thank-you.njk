@@ -38,9 +38,18 @@ permalink: /thank-you.html
         <a href="{{ '/' | url }}" class="btn primary" style="margin-bottom:16px">Return to Homepage</a>
 
         <div style="font-size:14px;color:var(--muted)">
-          Need help? Call us at <strong>(555) TAX-PEACE</strong>
+          Need help? Call us at <strong id="buyerPhone" data-phone>(555) TAX-PEACE</strong>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  const session = JSON.parse(localStorage.getItem('tpn_session') || '{}');
+  if (session.buyer_phone) {
+    document.querySelectorAll('[data-phone]').forEach(el => {
+      el.textContent = session.buyer_phone;
+    });
+  }
+</script>

@@ -2,13 +2,24 @@ name = "tax-peace-conversions"
 main = "cloudflare-worker.js"
 compatibility_date = "2024-01-01"
 
+# D1 Database binding for CRM
+[[d1_databases]]
+binding = "DB"
+database_name = "tpn_crm"
+database_id = "f8be108b-1ee4-4eef-91e5-41bcdc323abc"
+
+# KV namespace binding for session storage
+[[kv_namespaces]]
+binding = "SESSIONS_KV"
+id = "43ebe6d1074249bf83b89fd4a1b5e990"
+
 # Environment variables (set these in Cloudflare dashboard or via CLI)
 # wrangler secret put META_ACCESS_TOKEN
-# wrangler secret put META_PIXEL_ID  
+# wrangler secret put META_PIXEL_ID
 # wrangler secret put GOOGLE_SHEETS_URL (optional)
 
 [env.production]
 name = "tax-peace-conversions"
 
-[env.staging] 
+[env.staging]
 name = "tax-peace-conversions-staging"
