@@ -37,8 +37,10 @@ permalink: /thank-you.html
 
         <a href="{{ '/' | url }}" class="btn primary" style="margin-bottom:16px">Return to Homepage</a>
 
-        <div style="font-size:14px;color:var(--muted)">
-          Need help? Call us at <strong id="buyerPhone" data-phone>(555) TAX-PEACE</strong>
+        <div style="background:var(--brand);color:white;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div style="font-weight:600;margin-bottom:8px;font-size:16px">Need Immediate Help?</div>
+          <div style="font-size:14px;margin-bottom:12px">Speak with a tax specialist now</div>
+          <a href="tel:+18664667012" id="phoneNumber" style="color:white;text-decoration:none;font-size:24px;font-weight:bold;display:block">866-466-7012</a>
         </div>
       </div>
     </div>
@@ -46,10 +48,20 @@ permalink: /thank-you.html
 </div>
 
 <script>
-  const session = JSON.parse(localStorage.getItem('tpn_session') || '{}');
-  if (session.buyer_phone) {
-    document.querySelectorAll('[data-phone]').forEach(el => {
-      el.textContent = session.buyer_phone;
-    });
+  // Round-robin phone number logic
+  const phoneNumbers = [
+    { display: '866-466-7012', tel: '+18664667012' },
+    { display: '866-314-3628', tel: '+18663143628' }
+  ];
+  const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+  const phoneLink = document.getElementById('phoneNumber');
+  phoneLink.textContent = selectedPhone.display;
+  phoneLink.href = 'tel:' + selectedPhone.tel;
+
+  // Get name from URL params
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name');
+  if (name) {
+    document.getElementById('userName').textContent = name;
   }
 </script>

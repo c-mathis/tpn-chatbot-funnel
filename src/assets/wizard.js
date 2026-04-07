@@ -676,7 +676,24 @@ function advance(value) {
 
   stepIndex++;
 
-  if (stepIndex < getTotalSteps()) {
+  // After completing step 3, show Kirk's phone message
+  if (stepIndex === 3) {
+    setTimeout(() => {
+      const phoneNumbers = [
+        '866-466-7012',
+        '866-314-3628'
+      ];
+      const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+      const phoneMessage = `Or if you'd prefer to speak with someone right away, call us at <a href="tel:+1${selectedPhone.replace(/-/g, '')}" style="color: #7C3AED; font-weight: bold; text-decoration: none;">${selectedPhone}</a>`;
+
+      addBotMessage('Need immediate help?', phoneMessage);
+
+      // Then continue to next step after a brief delay
+      setTimeout(() => {
+        render();
+      }, 2000);
+    }, 800);
+  } else if (stepIndex < getTotalSteps()) {
     setTimeout(() => {
       render();
     }, 800);
@@ -757,7 +774,7 @@ async function submit() {
 
   // Send to Cloudflare Worker
   try {
-    await fetch('https://tax-peace-conversions.api-fivestartax.workers.dev', {
+    await fetch('https://tax-peace-conversions.cameron-07f.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, event_id: eventId })

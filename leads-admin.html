@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apex Tax Team - Leads</title>
+    <title>TPN Admin - All Leads</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
 
         .header {
             padding: 15px 0;
-            border-bottom: 2px solid #1e40af;
+            border-bottom: 3px solid #7C3AED;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
@@ -30,7 +30,7 @@
         .header h1 {
             font-size: 18px;
             font-weight: bold;
-            color: #1e40af;
+            color: #7C3AED;
         }
 
         .stats {
@@ -50,6 +50,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .filters label {
@@ -65,7 +66,7 @@
 
         .filters button {
             padding: 5px 15px;
-            background: #1e40af;
+            background: #7C3AED;
             color: white;
             border: none;
             cursor: pointer;
@@ -73,7 +74,45 @@
         }
 
         .filters button:hover {
-            background: #1e3a8a;
+            background: #6D28D9;
+        }
+
+        .buyer-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #F9FAFB;
+            border-radius: 6px;
+        }
+
+        .buyer-stat {
+            padding: 10px;
+            background: white;
+            border-left: 4px solid #7C3AED;
+            border-radius: 4px;
+        }
+
+        .buyer-stat.apex {
+            border-left-color: #1e40af;
+        }
+
+        .buyer-stat.trusted {
+            border-left-color: #047857;
+        }
+
+        .buyer-stat h3 {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .buyer-stat p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
         }
 
         table {
@@ -109,7 +148,7 @@
         }
 
         a {
-            color: #1e40af;
+            color: #7C3AED;
             text-decoration: none;
         }
 
@@ -131,6 +170,24 @@
         .status-converted { background: #c8e6c9; color: #2e7d32; }
         .status-lost { background: #ffebee; color: #c62828; }
 
+        .buyer-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .buyer-apex {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .buyer-trusted {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -146,22 +203,49 @@
         }
 
         .refresh-btn {
-            background: #3b82f6;
+            background: #10b981;
             margin-left: auto;
         }
 
         .refresh-btn:hover {
+            background: #059669;
+        }
+
+        .export-btn {
+            background: #3b82f6;
+        }
+
+        .export-btn:hover {
             background: #2563eb;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Apex Tax Team - Lead Dashboard</h1>
+        <h1>Tax Peace Now - Admin Dashboard (All Leads)</h1>
         <div class="stats">
             <div>Total: <span id="stat-total">0</span></div>
             <div>Today: <span id="stat-today">0</span></div>
             <div>New: <span id="stat-new">0</span></div>
+        </div>
+    </div>
+
+    <div class="buyer-stats" id="buyer-stats">
+        <div class="buyer-stat apex">
+            <h3>Apex Tax Team</h3>
+            <p id="apex-count">0</p>
+        </div>
+        <div class="buyer-stat trusted">
+            <h3>Trusted Tax</h3>
+            <p id="trusted-count">0</p>
+        </div>
+        <div class="buyer-stat">
+            <h3>Today's Apex</h3>
+            <p id="apex-today">0</p>
+        </div>
+        <div class="buyer-stat">
+            <h3>Today's Trusted</h3>
+            <p id="trusted-today">0</p>
         </div>
     </div>
 
@@ -176,11 +260,19 @@
             <option value="lost">Lost</option>
         </select>
 
+        <label>Buyer:</label>
+        <select id="filter-buyer">
+            <option value="">All</option>
+            <option value="1">Apex Tax Team</option>
+            <option value="2">Trusted Tax</option>
+        </select>
+
         <label>From:</label>
         <input type="date" id="filter-date">
 
         <button onclick="loadLeads()">Filter</button>
         <button class="refresh-btn" onclick="loadLeads()">Refresh</button>
+        <button class="export-btn" onclick="exportToCSV()">Export CSV</button>
     </div>
 
     <div id="loading" class="loading">Loading leads...</div>
@@ -191,6 +283,7 @@
             <tr>
                 <th>ID</th>
                 <th>Date/Time</th>
+                <th>Buyer</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -214,7 +307,7 @@
 
     <script>
         const API_URL = 'https://tpn-crm-api.cameron-07f.workers.dev';
-        const BUYER_ID = 1; // Apex Tax Team
+        let allLeads = [];
 
         // Auto-refresh every 30 seconds
         setInterval(() => {
@@ -223,30 +316,8 @@
 
         // Load on page load
         window.addEventListener('DOMContentLoaded', async () => {
-            await loadMetrics();
             await loadLeads();
         });
-
-        async function loadMetrics() {
-            try {
-                const response = await fetch(`${API_URL}/api/leads?buyer_id=${BUYER_ID}&limit=1000`);
-                const data = await response.json();
-
-                const total = data.leads.length;
-                const today = data.leads.filter(l => {
-                    const createdDate = new Date(l.created_at).toDateString();
-                    const todayDate = new Date().toDateString();
-                    return createdDate === todayDate;
-                }).length;
-                const newLeads = data.leads.filter(l => l.status === 'new').length;
-
-                document.getElementById('stat-total').textContent = total;
-                document.getElementById('stat-today').textContent = today;
-                document.getElementById('stat-new').textContent = newLeads;
-            } catch (error) {
-                console.error('Error loading metrics:', error);
-            }
-        }
 
         async function loadLeads() {
             const loading = document.getElementById('loading');
@@ -260,17 +331,20 @@
 
             try {
                 const params = new URLSearchParams();
-                params.append('buyer_id', BUYER_ID); // Only show Apex leads
 
                 const status = document.getElementById('filter-status').value;
+                const buyerId = document.getElementById('filter-buyer').value;
                 const startDate = document.getElementById('filter-date').value;
 
                 if (status) params.append('status', status);
+                if (buyerId) params.append('buyer_id', buyerId);
                 if (startDate) params.append('start_date', startDate);
-                params.append('limit', '500');
+                params.append('limit', '1000');
 
                 const response = await fetch(`${API_URL}/api/leads?${params}`);
                 const data = await response.json();
+
+                allLeads = data.leads; // Store for export
 
                 loading.style.display = 'none';
                 table.style.display = 'table';
@@ -280,7 +354,7 @@
                 if (data.leads.length === 0) {
                     const row = tbody.insertRow();
                     const cell = row.insertCell();
-                    cell.colSpan = 17;
+                    cell.colSpan = 18;
                     cell.style.textAlign = 'center';
                     cell.style.padding = '20px';
                     cell.textContent = 'No leads found';
@@ -305,9 +379,14 @@
                         minute: '2-digit'
                     });
 
+                    const buyerBadge = lead.buyer_id === 1
+                        ? '<span class="buyer-badge buyer-apex">Apex</span>'
+                        : '<span class="buyer-badge buyer-trusted">Trusted</span>';
+
                     row.innerHTML = `
                         <td>${lead.id}</td>
                         <td style="white-space: nowrap;">${formattedDate}<br><small style="color: #666;">${formattedTime}</small></td>
+                        <td>${buyerBadge}</td>
                         <td>${lead.first_name || ''}</td>
                         <td>${lead.last_name || ''}</td>
                         <td><a href="mailto:${lead.email}">${lead.email || ''}</a></td>
@@ -326,14 +405,109 @@
                     `;
                 });
 
-                // Update metrics after loading leads
-                await loadMetrics();
+                // Update stats
+                await updateStats(data.leads);
 
             } catch (err) {
                 loading.style.display = 'none';
                 error.style.display = 'block';
                 error.textContent = 'Error loading leads: ' + err.message;
             }
+        }
+
+        async function updateStats(leads) {
+            const total = leads.length;
+            const today = leads.filter(l => {
+                const createdDate = new Date(l.created_at).toDateString();
+                const todayDate = new Date().toDateString();
+                return createdDate === todayDate;
+            }).length;
+            const newLeads = leads.filter(l => l.status === 'new').length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-today').textContent = today;
+            document.getElementById('stat-new').textContent = newLeads;
+
+            // Buyer stats
+            const apexLeads = leads.filter(l => l.buyer_id === 1);
+            const trustedLeads = leads.filter(l => l.buyer_id === 2);
+            const apexToday = apexLeads.filter(l => {
+                const createdDate = new Date(l.created_at).toDateString();
+                const todayDate = new Date().toDateString();
+                return createdDate === todayDate;
+            }).length;
+            const trustedToday = trustedLeads.filter(l => {
+                const createdDate = new Date(l.created_at).toDateString();
+                const todayDate = new Date().toDateString();
+                return createdDate === todayDate;
+            }).length;
+
+            document.getElementById('apex-count').textContent = apexLeads.length;
+            document.getElementById('trusted-count').textContent = trustedLeads.length;
+            document.getElementById('apex-today').textContent = apexToday;
+            document.getElementById('trusted-today').textContent = trustedToday;
+        }
+
+        function exportToCSV() {
+            if (allLeads.length === 0) {
+                alert('No leads to export');
+                return;
+            }
+
+            const headers = [
+                'ID', 'Date', 'Time', 'Buyer', 'First Name', 'Last Name', 'Email', 'Phone',
+                'State', 'Tax Problem', 'Tax Jurisdiction', 'Debt Amount', 'Tax Type',
+                'Employment', 'Collection Actions', 'Unfiled Years', 'Contact Time', 'Status', 'Source'
+            ];
+
+            const rows = allLeads.map(lead => {
+                let taxData = {};
+                try {
+                    taxData = JSON.parse(lead.tax_data || '{}');
+                } catch (e) {}
+
+                const createdDate = new Date(lead.created_at);
+                const date = createdDate.toLocaleDateString('en-US');
+                const time = createdDate.toLocaleTimeString('en-US');
+                const buyer = lead.buyer_id === 1 ? 'Apex Tax Team' : 'Trusted Tax';
+
+                return [
+                    lead.id,
+                    date,
+                    time,
+                    buyer,
+                    lead.first_name || '',
+                    lead.last_name || '',
+                    lead.email || '',
+                    lead.phone || '',
+                    lead.state || '',
+                    lead.tax_problem || '',
+                    lead.tax_jurisdiction || '',
+                    taxData.debt_amount || '',
+                    taxData.tax_type || '',
+                    taxData.employment_status || '',
+                    taxData.collection_actions || '',
+                    taxData.unfiled_years || '',
+                    taxData.contactTime || '',
+                    lead.status || '',
+                    lead.source || ''
+                ];
+            });
+
+            const csv = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tpn-leads-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         }
     </script>
 </body>

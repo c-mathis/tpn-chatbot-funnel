@@ -6,12 +6,12 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "tpn_crm"
-database_id = "f8be108b-1ee4-4eef-91e5-41bcdc323abc"
+database_id = "f473c127-665e-435e-866b-56c78c368fea"
 
 # KV namespace binding for session storage
 [[kv_namespaces]]
 binding = "SESSIONS_KV"
-id = "43ebe6d1074249bf83b89fd4a1b5e990"
+id = "b34e0863466046d2ad779c2a566ce469"
 
 # Environment variables (set these in Cloudflare dashboard or via CLI)
 # wrangler secret put META_ACCESS_TOKEN
