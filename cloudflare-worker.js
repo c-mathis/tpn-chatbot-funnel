@@ -60,20 +60,9 @@ export default {
       // Use event ID from client for deduplication
       const eventId = data.event_id;
 
-      // Get buyer from session ID (if exists)
-      let buyerId = null;
-      if (session_id) {
-        const session = await env.SESSIONS_KV.get(`session:${session_id}`, 'json');
-        if (session) {
-          buyerId = session.buyer_id;
-        }
-      }
-
-      // Fallback: If no valid session, assign now
-      if (!buyerId) {
-        const buyer = await assignBuyer(env);
-        buyerId = buyer?.id;
-      }
+      // Smart lead routing based on form answers
+      const buyer = await assignBuyerSmart(data, env);
+      const buyerId = buyer?.id;
 
       // Store lead in D1 database
       await env.DB.prepare(`
@@ -162,11 +151,12 @@ export default {
 };
 
 /**
- * Round-robin buyer assignment with weighted distribution
- * (Duplicated from crm-api.js for self-contained deployment)
+ * Smart lead routing based on tax situation and debt amount
+ * Apex Tax Team (ID: 1) = CPA-style leads
+ * Trusted Tax (ID: 2) = General tax resolution
  */
-async function assignBuyer(env) {
-  // Get active buyers ordered by ID
+async function assignBuyerSmart(leadData, env) {
+  // Get active buyers
   const { results: buyers } = await env.DB.prepare(
     'SELECT * FROM buyers WHERE is_active = 1 ORDER BY id ASC'
   ).all();
@@ -175,38 +165,85 @@ async function assignBuyer(env) {
     return null;
   }
 
-  // Get current round-robin position
-  const { results: settings } = await env.DB.prepare(
-    'SELECT value FROM settings WHERE key = ?'
-  ).bind('round_robin_position').all();
+  const apexBuyer = buyers.find(b => b.id === 1);
+  const trustedBuyer = buyers.find(b => b.id === 2);
 
-  let position = 0;
-  if (settings && settings.length > 0) {
-    position = parseInt(settings[0].value) || 0;
+  if (!apexBuyer || !trustedBuyer) {
+    // Fallback to first active buyer if either is missing
+    return buyers[0];
   }
 
-  // Build weighted pool (repeat buyers by weight)
-  const weightedPool = [];
-  for (const buyer of buyers) {
-    const weight = buyer.weight || 1;
-    for (let i = 0; i < weight; i++) {
-      weightedPool.push(buyer);
-    }
+  // Parse tax_data for additional fields
+  let taxData = {};
+  try {
+    taxData = typeof leadData.tax_data === 'string'
+      ? JSON.parse(leadData.tax_data)
+      : (leadData.tax_data || {});
+  } catch (e) {
+    taxData = {};
   }
 
-  // Select buyer using position % pool.length
-  const selectedBuyer = weightedPool[position % weightedPool.length];
+  // CPA-Style Routing Rules (Always → Apex)
+  // Rule 1: "I need help filing or organizing my taxes"
+  if (leadData.tax_problem === "I need help filing or organizing my taxes") {
+    await incrementBuyerLeads(env, apexBuyer.id);
+    return apexBuyer;
+  }
 
-  // Increment position for next assignment
-  const nextPosition = (position + 1) % weightedPool.length;
-  await env.DB.prepare(
-    'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = ?'
-  ).bind('round_robin_position', nextPosition.toString(), nextPosition.toString()).run();
+  // Rule 2: Unfiled returns with "Current year - 1 year" selected
+  const unfiledYears = taxData.unfiled_years || leadData.unfiled_years;
+  if (unfiledYears === "Current year - 1 year") {
+    await incrementBuyerLeads(env, apexBuyer.id);
+    return apexBuyer;
+  }
 
-  // Update buyer total_leads counter
+  // Debt-Based Routing Rules
+  const debtAmount = taxData.debt_amount || leadData.debt_amount || '';
+
+  // Under $10k → 25% Apex, 75% Trusted
+  if (debtAmount.includes('$0 - $10,000')) {
+    const random = Math.random();
+    const selectedBuyer = random < 0.25 ? apexBuyer : trustedBuyer;
+    await incrementBuyerLeads(env, selectedBuyer.id);
+    return selectedBuyer;
+  }
+
+  // $10k-$50k → 100% Trusted
+  // Matches: $10,001 - $20,000 through $40,001 - $50,000
+  if (debtAmount.includes('$10,001') ||
+      debtAmount.includes('$20,001') ||
+      debtAmount.includes('$30,001') ||
+      debtAmount.includes('$40,001')) {
+    await incrementBuyerLeads(env, trustedBuyer.id);
+    return trustedBuyer;
+  }
+
+  // $50k+ → 50% Apex, 50% Trusted
+  // Matches: $50,000 - $75,000 and higher
+  if (debtAmount.includes('$50,000') ||
+      debtAmount.includes('$75,000') ||
+      debtAmount.includes('$100,0') ||
+      debtAmount.includes('$200,000') ||
+      debtAmount.includes('$300,000') ||
+      debtAmount.includes('$400,000')) {
+    const random = Math.random();
+    const selectedBuyer = random < 0.5 ? apexBuyer : trustedBuyer;
+    await incrementBuyerLeads(env, selectedBuyer.id);
+    return selectedBuyer;
+  }
+
+  // Default fallback: 50/50 split
+  const random = Math.random();
+  const selectedBuyer = random < 0.5 ? apexBuyer : trustedBuyer;
+  await incrementBuyerLeads(env, selectedBuyer.id);
+  return selectedBuyer;
+}
+
+/**
+ * Increment buyer lead counter
+ */
+async function incrementBuyerLeads(env, buyerId) {
   await env.DB.prepare(
     'UPDATE buyers SET total_leads = total_leads + 1 WHERE id = ?'
-  ).bind(selectedBuyer.id).run();
-
-  return selectedBuyer;
+  ).bind(buyerId).run();
 }

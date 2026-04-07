@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Tax Team - Leads</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .header {
+            padding: 15px 0;
+            border-bottom: 2px solid #1e40af;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stats span {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .filters {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filters label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .filters select, .filters input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+        }
+
+        .filters button {
+            padding: 5px 15px;
+            background: #1e40af;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .filters button:hover {
+            background: #1e3a8a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 6px 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        a {
+            color: #1e40af;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-new { background: #dbeafe; color: #1e40af; }
+        .status-contacted { background: #fff3e0; color: #f57c00; }
+        .status-qualified { background: #e8f5e9; color: #388e3c; }
+        .status-converted { background: #c8e6c9; color: #2e7d32; }
+        .status-lost { background: #ffebee; color: #c62828; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border: 1px solid #ef9a9a;
+            margin: 10px 0;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            margin-left: auto;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Apex Tax Team - Lead Dashboard</h1>
+        <div class="stats">
+            <div>Total: <span id="stat-total">0</span></div>
+            <div>Today: <span id="stat-today">0</span></div>
+            <div>New: <span id="stat-new">0</span></div>
+        </div>
+    </div>
+
+    <div class="filters">
+        <label>Status:</label>
+        <select id="filter-status">
+            <option value="">All</option>
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="qualified">Qualified</option>
+            <option value="converted">Converted</option>
+            <option value="lost">Lost</option>
+        </select>
+
+        <label>From:</label>
+        <input type="date" id="filter-date">
+
+        <button onclick="loadLeads()">Filter</button>
+        <button class="refresh-btn" onclick="loadLeads()">Refresh</button>
+    </div>
+
+    <div id="loading" class="loading">Loading leads...</div>
+    <div id="error" class="error" style="display: none;"></div>
+
+    <table id="leads-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date/Time</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>State</th>
+                <th>Tax Problem</th>
+                <th>Tax Jurisdiction</th>
+                <th>Debt Amount</th>
+                <th>Tax Type</th>
+                <th>Employment</th>
+                <th>Collection Actions</th>
+                <th>Unfiled Years</th>
+                <th>Contact Time</th>
+                <th>Status</th>
+                <th>Source</th>
+            </tr>
+        </thead>
+        <tbody id="leads-tbody">
+        </tbody>
+    </table>
+
+    <script>
+        const API_URL = 'https://tpn-crm-api.api-fivestartax.workers.dev';
+        const BUYER_ID = 1; // Apex Tax Team
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadLeads();
+        }, 30000);
+
+        // Load on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadMetrics();
+            await loadLeads();
+        });
+
+        async function loadMetrics() {
+            try {
+                const response = await fetch(`${API_URL}/api/leads?buyer_id=${BUYER_ID}&limit=1000`);
+                const data = await response.json();
+
+                const total = data.leads.length;
+                const today = data.leads.filter(l => {
+                    const createdDate = new Date(l.created_at).toDateString();
+                    const todayDate = new Date().toDateString();
+                    return createdDate === todayDate;
+                }).length;
+                const newLeads = data.leads.filter(l => l.status === 'new').length;
+
+                document.getElementById('stat-total').textContent = total;
+                document.getElementById('stat-today').textContent = today;
+                document.getElementById('stat-new').textContent = newLeads;
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+
+        async function loadLeads() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const table = document.getElementById('leads-table');
+            const tbody = document.getElementById('leads-tbody');
+
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            table.style.display = 'none';
+
+            try {
+                const params = new URLSearchParams();
+                params.append('buyer_id', BUYER_ID); // Only show Apex leads
+
+                const status = document.getElementById('filter-status').value;
+                const startDate = document.getElementById('filter-date').value;
+
+                if (status) params.append('status', status);
+                if (startDate) params.append('start_date', startDate);
+                params.append('limit', '500');
+
+                const response = await fetch(`${API_URL}/api/leads?${params}`);
+                const data = await response.json();
+
+                loading.style.display = 'none';
+                table.style.display = 'table';
+
+                tbody.innerHTML = '';
+
+                if (data.leads.length === 0) {
+                    const row = tbody.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = 17;
+                    cell.style.textAlign = 'center';
+                    cell.style.padding = '20px';
+                    cell.textContent = 'No leads found';
+                    return;
+                }
+
+                data.leads.forEach(lead => {
+                    let taxData = {};
+                    try {
+                        taxData = JSON.parse(lead.tax_data || '{}');
+                    } catch (e) {}
+
+                    const row = tbody.insertRow();
+                    const createdDate = new Date(lead.created_at);
+                    const formattedDate = createdDate.toLocaleDateString('en-US', {
+                        month: '2-digit',
+                        day: '2-digit',
+                        year: 'numeric'
+                    });
+                    const formattedTime = createdDate.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    row.innerHTML = `
+                        <td>${lead.id}</td>
+                        <td style="white-space: nowrap;">${formattedDate}<br><small style="color: #666;">${formattedTime}</small></td>
+                        <td>${lead.first_name || ''}</td>
+                        <td>${lead.last_name || ''}</td>
+                        <td><a href="mailto:${lead.email}">${lead.email || ''}</a></td>
+                        <td><a href="tel:${lead.phone}">${lead.phone || ''}</a></td>
+                        <td>${lead.state || ''}</td>
+                        <td>${lead.tax_problem || ''}</td>
+                        <td>${lead.tax_jurisdiction || ''}</td>
+                        <td>${taxData.debt_amount || ''}</td>
+                        <td>${taxData.tax_type || ''}</td>
+                        <td>${taxData.employment_status || ''}</td>
+                        <td>${taxData.collection_actions || ''}</td>
+                        <td>${taxData.unfiled_years || ''}</td>
+                        <td>${taxData.contactTime || ''}</td>
+                        <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
+                        <td style="font-size: 11px; color: #666;">${lead.source || ''}</td>
+                    `;
+                });
+
+                // Update metrics after loading leads
+                await loadMetrics();
+
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = 'Error loading leads: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>

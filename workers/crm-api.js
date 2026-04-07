@@ -33,6 +33,21 @@ export default {
         return handleAssignVisitor(env, corsHeaders);
       }
 
+      // Route: GET /api/leads (NO AUTH REQUIRED - read-only for sales team)
+      if (path === '/api/leads' && method === 'GET') {
+        return handleGetLeads(url, env, corsHeaders);
+      }
+
+      // Route: GET /api/buyers (NO AUTH REQUIRED - read-only for sales team)
+      if (path === '/api/buyers' && method === 'GET') {
+        return handleGetBuyers(env, corsHeaders);
+      }
+
+      // Route: GET /api/metrics (NO AUTH REQUIRED - read-only for sales team)
+      if (path === '/api/metrics' && method === 'GET') {
+        return handleGetMetrics(env, corsHeaders);
+      }
+
       // All other endpoints require authentication
       const authError = authenticateRequest(request, env);
       if (authError) {
@@ -42,20 +57,10 @@ export default {
         });
       }
 
-      // Route: GET /api/leads
-      if (path === '/api/leads' && method === 'GET') {
-        return handleGetLeads(url, env, corsHeaders);
-      }
-
       // Route: PUT /api/leads/:id
       if (path.startsWith('/api/leads/') && method === 'PUT') {
         const leadId = path.split('/')[3];
         return handleUpdateLead(leadId, request, env, corsHeaders);
-      }
-
-      // Route: GET /api/buyers
-      if (path === '/api/buyers' && method === 'GET') {
-        return handleGetBuyers(env, corsHeaders);
       }
 
       // Route: PUT /api/buyers/:id
@@ -67,11 +72,6 @@ export default {
       // Route: GET /api/export
       if (path === '/api/export' && method === 'GET') {
         return handleExportLeads(url, env, corsHeaders);
-      }
-
-      // Route: GET /api/metrics
-      if (path === '/api/metrics' && method === 'GET') {
-        return handleGetMetrics(env, corsHeaders);
       }
 
       // 404 for unknown routes

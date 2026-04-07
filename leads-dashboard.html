@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPN Leads Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-form {
+            padding: 40px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .filters {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .filters.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stats {
+            padding: 20px;
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stats.active {
+            display: grid;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .leads-container {
+            padding: 20px;
+            display: none;
+        }
+
+        .leads-container.active {
+            display: block;
+        }
+
+        .lead-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: box-shadow 0.2s;
+        }
+
+        .lead-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .lead-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .lead-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-new {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-contacted {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-qualified {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-converted {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-lost {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .lead-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .info-value a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+
+        .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        .tax-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .tax-details-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 8px 16px;
+            width: auto;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .lead-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tax Peace Now - Leads Dashboard</h1>
+            <p id="header-subtitle">Login to view leads</p>
+            <button class="logout-btn" id="logout-btn" style="display: none;">Logout</button>
+        </div>
+
+        <div id="login-container" class="login-form">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="api-url">API URL</label>
+                    <input type="text" id="api-url" value="https://tpn-crm-api.api-fivestartax.workers.dev" required>
+                    <small style="color: #6b7280; display: block; margin-top: 5px;">CRM API endpoint</small>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div id="login-error" class="error" style="display: none; margin-top: 15px;"></div>
+        </div>
+
+        <div class="stats" id="stats-container">
+            <div class="stat-card">
+                <h3>Total Leads</h3>
+                <p id="stat-total">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Today's Leads</h3>
+                <p id="stat-today">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>New Leads</h3>
+                <p id="stat-new">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Contacted</h3>
+                <p id="stat-contacted">0</p>
+            </div>
+        </div>
+
+        <div class="filters" id="filters-container">
+            <div class="form-group">
+                <label for="filter-status">Status</label>
+                <select id="filter-status">
+                    <option value="">All Statuses</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="qualified">Qualified</option>
+                    <option value="converted">Converted</option>
+                    <option value="lost">Lost</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filter-buyer">Buyer</label>
+                <select id="filter-buyer">
+                    <option value="">All Buyers</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filter-date">Start Date</label>
+                <input type="date" id="filter-date">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button onclick="loadLeads()">Apply Filters</button>
+            </div>
+        </div>
+
+        <div class="leads-container" id="leads-container">
+            <div class="loading" id="loading">Loading leads...</div>
+            <div id="leads-list"></div>
+        </div>
+    </div>
+
+    <script>
+        let authCredentials = null;
+        let apiUrl = null;
+
+        // Login handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            apiUrl = document.getElementById('api-url').value.replace(/\/$/, ''); // Remove trailing slash
+
+            authCredentials = btoa(`${username}:${password}`);
+
+            try {
+                // Test authentication by fetching metrics
+                const response = await fetch(`${apiUrl}/api/metrics`, {
+                    headers: {
+                        'Authorization': `Basic ${authCredentials}`
+                    }
+                });
+
+                if (response.ok) {
+                    // Save credentials to sessionStorage
+                    sessionStorage.setItem('tpn_auth', authCredentials);
+                    sessionStorage.setItem('tpn_api_url', apiUrl);
+
+                    // Show dashboard
+                    document.getElementById('login-container').style.display = 'none';
+                    document.getElementById('stats-container').classList.add('active');
+                    document.getElementById('filters-container').classList.add('active');
+                    document.getElementById('leads-container').classList.add('active');
+                    document.getElementById('logout-btn').style.display = 'block';
+                    document.getElementById('header-subtitle').textContent = `Logged in as ${username}`;
+
+                    // Load data
+                    await loadBuyers();
+                    await loadMetrics();
+                    await loadLeads();
+                } else {
+                    document.getElementById('login-error').textContent = 'Invalid credentials or API URL';
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('login-error').textContent = 'Error connecting to API: ' + error.message;
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.removeItem('tpn_auth');
+            sessionStorage.removeItem('tpn_api_url');
+            location.reload();
+        });
+
+        // Check for existing session
+        window.addEventListener('DOMContentLoaded', async () => {
+            const savedAuth = sessionStorage.getItem('tpn_auth');
+            const savedUrl = sessionStorage.getItem('tpn_api_url');
+
+            if (savedAuth && savedUrl) {
+                authCredentials = savedAuth;
+                apiUrl = savedUrl;
+
+                // Verify credentials still work
+                try {
+                    const response = await fetch(`${apiUrl}/api/metrics`, {
+                        headers: {
+                            'Authorization': `Basic ${authCredentials}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('stats-container').classList.add('active');
+                        document.getElementById('filters-container').classList.add('active');
+                        document.getElementById('leads-container').classList.add('active');
+                        document.getElementById('logout-btn').style.display = 'block';
+                        document.getElementById('header-subtitle').textContent = 'Welcome back';
+
+                        await loadBuyers();
+                        await loadMetrics();
+                        await loadLeads();
+                    }
+                } catch (error) {
+                    // Session invalid, show login
+                    sessionStorage.removeItem('tpn_auth');
+                    sessionStorage.removeItem('tpn_api_url');
+                }
+            }
+        });
+
+        // Load buyers for filter dropdown
+        async function loadBuyers() {
+            try {
+                const response = await fetch(`${apiUrl}/api/buyers`, {
+                    headers: {
+                        'Authorization': `Basic ${authCredentials}`
+                    }
+                });
+
+                const data = await response.json();
+                const select = document.getElementById('filter-buyer');
+
+                data.buyers.forEach(buyer => {
+                    const option = document.createElement('option');
+                    option.value = buyer.id;
+                    option.textContent = buyer.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading buyers:', error);
+            }
+        }
+
+        // Load metrics
+        async function loadMetrics() {
+            try {
+                const response = await fetch(`${apiUrl}/api/metrics`, {
+                    headers: {
+                        'Authorization': `Basic ${authCredentials}`
+                    }
+                });
+
+                const data = await response.json();
+
+                document.getElementById('stat-total').textContent = data.total_leads;
+                document.getElementById('stat-today').textContent = data.today_leads;
+
+                const newLeads = data.status_breakdown.find(s => s.status === 'new');
+                const contacted = data.status_breakdown.find(s => s.status === 'contacted');
+
+                document.getElementById('stat-new').textContent = newLeads?.count || 0;
+                document.getElementById('stat-contacted').textContent = contacted?.count || 0;
+            } catch (error) {
+                console.error('Error loading metrics:', error);
+            }
+        }
+
+        // Load leads
+        async function loadLeads() {
+            const loading = document.getElementById('loading');
+            const leadsList = document.getElementById('leads-list');
+
+            loading.style.display = 'block';
+            leadsList.innerHTML = '';
+
+            try {
+                // Build query params
+                const params = new URLSearchParams();
+
+                const status = document.getElementById('filter-status').value;
+                const buyerId = document.getElementById('filter-buyer').value;
+                const startDate = document.getElementById('filter-date').value;
+
+                if (status) params.append('status', status);
+                if (buyerId) params.append('buyer_id', buyerId);
+                if (startDate) params.append('start_date', startDate);
+                params.append('limit', '100');
+
+                const response = await fetch(`${apiUrl}/api/leads?${params}`, {
+                    headers: {
+                        'Authorization': `Basic ${authCredentials}`
+                    }
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+
+                if (data.leads.length === 0) {
+                    leadsList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">No leads found</p>';
+                    return;
+                }
+
+                data.leads.forEach(lead => {
+                    const card = createLeadCard(lead);
+                    leadsList.appendChild(card);
+                });
+            } catch (error) {
+                loading.style.display = 'none';
+                leadsList.innerHTML = `<div class="error">Error loading leads: ${error.message}</div>`;
+            }
+        }
+
+        // Create lead card element
+        function createLeadCard(lead) {
+            const card = document.createElement('div');
+            card.className = 'lead-card';
+
+            let taxData = {};
+            try {
+                taxData = JSON.parse(lead.tax_data || '{}');
+            } catch (e) {}
+
+            const createdDate = new Date(lead.created_at).toLocaleString();
+
+            card.innerHTML = `
+                <div class="lead-header">
+                    <div class="lead-name">${lead.first_name} ${lead.last_name}</div>
+                    <div class="lead-status status-${lead.status}">${lead.status}</div>
+                </div>
+
+                <div class="lead-info">
+                    <div class="info-group">
+                        <span class="info-label">Email</span>
+                        <span class="info-value"><a href="mailto:${lead.email}">${lead.email}</a></span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value"><a href="tel:${lead.phone}">${lead.phone}</a></span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">State</span>
+                        <span class="info-value">${lead.state}</span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Tax Problem</span>
+                        <span class="info-value">${lead.tax_problem || 'Not specified'}</span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Tax Jurisdiction</span>
+                        <span class="info-value">${lead.tax_jurisdiction || 'Not specified'}</span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Assigned To</span>
+                        <span class="info-value">${lead.buyer_name || 'Unassigned'}</span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Source</span>
+                        <span class="info-value">${lead.source}</span>
+                    </div>
+
+                    <div class="info-group">
+                        <span class="info-label">Created</span>
+                        <span class="info-value">${createdDate}</span>
+                    </div>
+                </div>
+
+                ${Object.keys(taxData).length > 0 ? `
+                    <div class="tax-details">
+                        <div class="tax-details-title">Additional Details</div>
+                        <div class="lead-info">
+                            ${taxData.debt_amount ? `
+                                <div class="info-group">
+                                    <span class="info-label">Debt Amount</span>
+                                    <span class="info-value">${taxData.debt_amount}</span>
+                                </div>
+                            ` : ''}
+
+                            ${taxData.tax_type ? `
+                                <div class="info-group">
+                                    <span class="info-label">Tax Type</span>
+                                    <span class="info-value">${taxData.tax_type}</span>
+                                </div>
+                            ` : ''}
+
+                            ${taxData.employment_status ? `
+                                <div class="info-group">
+                                    <span class="info-label">Employment Status</span>
+                                    <span class="info-value">${taxData.employment_status}</span>
+                                </div>
+                            ` : ''}
+
+                            ${taxData.collection_actions ? `
+                                <div class="info-group">
+                                    <span class="info-label">Collection Actions</span>
+                                    <span class="info-value">${taxData.collection_actions}</span>
+                                </div>
+                            ` : ''}
+
+                            ${taxData.unfiled_years ? `
+                                <div class="info-group">
+                                    <span class="info-label">Unfiled Years</span>
+                                    <span class="info-value">${taxData.unfiled_years}</span>
+                                </div>
+                            ` : ''}
+
+                            ${taxData.contactTime ? `
+                                <div class="info-group">
+                                    <span class="info-label">Best Contact Time</span>
+                                    <span class="info-value">${taxData.contactTime}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            return card;
+        }
+    </script>
+</body>
+</html>

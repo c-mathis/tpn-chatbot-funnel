@@ -73,7 +73,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'How many years are unfiled?',
     sub: '',
-    options: ['1 year', '2–3 years', '4–5 years', '6+ years'],
+    options: ['Current year - 1 year', '2–3 years', '4–5 years', '6+ years'],
     required: true
   },
   unfiled_refund: {
@@ -253,6 +253,12 @@ function buildPath() {
   // If we have a tax_problem answer, add the conditional steps
   if (data.tax_problem && FLOWS[data.tax_problem]) {
     currentPath = currentPath.concat(FLOWS[data.tax_problem]);
+  }
+
+  // If they selected "I'm not sure" → "I haven't filed or need help filing", add unfiled years
+  if (data.not_sure_clarify === "I haven't filed or need help filing") {
+    const insertIndex = currentPath.indexOf('not_sure_clarify') + 1;
+    currentPath.splice(insertIndex, 0, 'unfiled_years', 'unfiled_self_employed');
   }
 
   // Add universal steps
@@ -663,8 +669,8 @@ function advance(value) {
     });
   }
 
-  // If this was the tax_problem question, rebuild the path
-  if (s.id === 'tax_problem') {
+  // If this was the tax_problem or not_sure_clarify question, rebuild the path
+  if (s.id === 'tax_problem' || s.id === 'not_sure_clarify') {
     buildPath();
   }
 
@@ -751,7 +757,7 @@ async function submit() {
 
   // Send to Cloudflare Worker
   try {
-    await fetch('https://tax-peace-conversions.YOUR-SUBDOMAIN.workers.dev/', {
+    await fetch('https://tax-peace-conversions.api-fivestartax.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, event_id: eventId })

@@ -1,0 +1,24 @@
+name = "tpn-crm-api"
+main = "crm-api.js"
+compatibility_date = "2024-01-01"
+
+# D1 Database binding for CRM (shared with conversion worker)
+[[d1_databases]]
+binding = "DB"
+database_name = "tpn_crm"
+database_id = "f8be108b-1ee4-4eef-91e5-41bcdc323abc"
+
+# KV namespace binding for session storage (shared with conversion worker)
+[[kv_namespaces]]
+binding = "SESSIONS_KV"
+id = "43ebe6d1074249bf83b89fd4a1b5e990"
+
+# Set these secrets via CLI:
+# wrangler secret put ADMIN_USER --config workers/wrangler-crm.toml
+# wrangler secret put ADMIN_PASS --config workers/wrangler-crm.toml
+
+[env.production]
+name = "tpn-crm-api"
+
+[env.staging]
+name = "tpn-crm-api-staging"
