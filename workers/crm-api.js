@@ -69,6 +69,12 @@ export default {
         return handleUpdateBuyer(buyerId, request, env, corsHeaders);
       }
 
+      // Route: DELETE /api/leads/:id
+      if (path.startsWith('/api/leads/') && method === 'DELETE') {
+        const leadId = path.split('/')[3];
+        return handleDeleteLead(leadId, env, corsHeaders);
+      }
+
       // Route: GET /api/export
       if (path === '/api/export' && method === 'GET') {
         return handleExportLeads(url, env, corsHeaders);
@@ -451,6 +457,28 @@ async function handleGetMetrics(env, corsHeaders) {
     buyer_distribution: distribution,
     status_breakdown: statusBreakdown,
   }), {
+    status: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
+
+/**
+ * DELETE /api/leads/:id
+ * Delete a lead (admin only)
+ */
+async function handleDeleteLead(leadId, env, corsHeaders) {
+  if (!leadId || isNaN(parseInt(leadId))) {
+    return new Response(JSON.stringify({ error: 'Invalid lead ID' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
+  await env.DB.prepare(
+    'DELETE FROM leads WHERE id = ?'
+  ).bind(parseInt(leadId)).run();
+
+  return new Response(JSON.stringify({ success: true, id: leadId }), {
     status: 200,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
