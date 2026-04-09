@@ -48,7 +48,13 @@ export default {
         session_id,
         fbclid,
         fbc,
-        fbp
+        fbp,
+        // Additional fields from different flow branches
+        back_taxes_amount,
+        back_taxes_actions,
+        notice_amount,
+        filing_status,
+        business_structure
       } = data;
 
       // Get client IP and user agent
@@ -82,12 +88,12 @@ export default {
         tax_problem || 'Not specified',
         tax_jurisdiction || 'Not specified',
         JSON.stringify({
-          debt_amount,
-          tax_type,
-          employment_status,
-          collection_actions,
-          unfiled_years,
-          contactTime
+          debt_amount: debt_amount || back_taxes_amount || notice_amount || '',
+          tax_type: tax_type || '',
+          employment_status: employment_status || filing_status || business_structure || '',
+          collection_actions: collection_actions || (Array.isArray(back_taxes_actions) ? back_taxes_actions.join(', ') : back_taxes_actions) || '',
+          unfiled_years: unfiled_years || '',
+          contactTime: contactTime || 'Any time'
         }),
         buyerId,
         source,
@@ -198,7 +204,7 @@ async function assignBuyerSmart(leadData, env) {
   }
 
   // Debt-Based Routing Rules
-  const debtAmount = taxData.debt_amount || leadData.debt_amount || '';
+  const debtAmount = taxData.debt_amount || leadData.debt_amount || leadData.back_taxes_amount || '';
 
   // Under $10k → 25% Apex, 75% Trusted
   if (debtAmount.includes('$0 - $10,000')) {

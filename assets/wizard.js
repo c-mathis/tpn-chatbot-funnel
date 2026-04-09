@@ -707,8 +707,21 @@ async function postToGoogle(payload) {
 }
 
 async function submit() {
-  const payload = {
-    ...data,
+  // Map chatbot fields to database fields
+  const mappedData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phone: data.phone,
+    state: data.state,
+    tax_problem: data.tax_problem,
+    tax_jurisdiction: data.tax_jurisdiction,
+    // Map conditional fields to standardized names
+    debt_amount: data.back_taxes_amount || data.notice_amount || '',
+    collection_actions: Array.isArray(data.back_taxes_actions) ? data.back_taxes_actions.join(', ') : (data.back_taxes_actions || ''),
+    unfiled_years: data.unfiled_years || '',
+    employment_status: data.filing_status || data.business_structure || '',
+    contactTime: 'Any time', // Default since we don't ask this in current flow
     ts: new Date().toISOString(),
     source: 'Tax Peace Now Chatbot',
     page_url: window.location.href,
@@ -716,6 +729,8 @@ async function submit() {
     fbc: fbc,
     fbp: fbp
   };
+
+  const payload = mappedData;
 
   const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
