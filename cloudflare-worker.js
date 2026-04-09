@@ -103,9 +103,46 @@ export default {
         fbp || null
       ).run();
 
+      // Send Apex Tax Team leads to their Base44 app
+      if (buyerId === 1) { // Apex Tax Team
+        try {
+          const taxDataObj = JSON.parse(JSON.stringify({
+            debt_amount: debt_amount || back_taxes_amount || notice_amount || '',
+            tax_type: tax_type || '',
+            employment_status: employment_status || filing_status || business_structure || '',
+            collection_actions: collection_actions || (Array.isArray(back_taxes_actions) ? back_taxes_actions.join(', ') : back_taxes_actions) || '',
+            unfiled_years: unfiled_years || '',
+            contactTime: contactTime || 'Any time'
+          }));
+
+          await fetch('https://accu-flow-client-portal-d8bc4474.base44.app/api/functions/receiveTaxLeadFromTPN', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              firstName,
+              lastName,
+              email,
+              phone,
+              state,
+              tax_problem,
+              tax_jurisdiction,
+              debt_amount: taxDataObj.debt_amount,
+              collection_actions: taxDataObj.collection_actions,
+              unfiled_years: taxDataObj.unfiled_years,
+              employment_status: taxDataObj.employment_status,
+              source: source || 'Tax Peace Now Chatbot',
+              event_id: eventId
+            })
+          });
+          console.log('Lead sent to Apex Base44 app');
+        } catch (apexError) {
+          console.error('Failed to send lead to Apex app:', apexError);
+        }
+      }
+
       // Meta Conversions API disabled - browser pixel tracking is sufficient
       // Browser-side fbq('track', 'CompleteRegistration') handles conversion tracking
-      
+
       // Optional: Send to Google Sheets (keep existing functionality)
       if (env.GOOGLE_SHEETS_URL) {
         try {
