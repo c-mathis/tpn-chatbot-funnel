@@ -205,7 +205,6 @@
                 <th>Unfiled Years</th>
                 <th>Contact Time</th>
                 <th>Status</th>
-                <th>Source</th>
             </tr>
         </thead>
         <tbody id="leads-tbody">
@@ -280,7 +279,7 @@
                 if (data.leads.length === 0) {
                     const row = tbody.insertRow();
                     const cell = row.insertCell();
-                    cell.colSpan = 17;
+                    cell.colSpan = 16;
                     cell.style.textAlign = 'center';
                     cell.style.padding = '20px';
                     cell.textContent = 'No leads found';
@@ -322,7 +321,6 @@
                         <td>${taxData.unfiled_years || ''}</td>
                         <td>${taxData.contactTime || ''}</td>
                         <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
-                        <td style="font-size: 11px; color: #666;">${lead.source || ''}</td>
                     `;
                 });
 
