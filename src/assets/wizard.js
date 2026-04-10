@@ -749,9 +749,12 @@ async function submit() {
   // Check if this is a test submission (via URL parameter ?test=true)
   const isTest = window.location.search.includes('test=true');
 
+  // Check if user came from Facebook (has fbclid parameter or fbc cookie)
+  const isFromFacebook = !!(fbclid || fbc);
+
   // Track form submission with Meta pixel (with Advanced Matching)
-  // Skip tracking for test submissions
-  if (typeof fbq !== 'undefined' && !isTest) {
+  // Only track if: NOT a test AND came from Facebook
+  if (typeof fbq !== 'undefined' && !isTest && isFromFacebook) {
     fbq('track', 'CompleteRegistration', {
       content_name: 'Tax Peace Assessment',
       status: 'complete'
