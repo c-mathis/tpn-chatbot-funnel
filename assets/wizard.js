@@ -734,8 +734,12 @@ async function submit() {
 
   const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+  // Check if this is a test submission (via URL parameter ?test=true)
+  const isTest = window.location.search.includes('test=true');
+
   // Track form submission with Meta pixel (with Advanced Matching)
-  if (typeof fbq !== 'undefined') {
+  // Skip tracking for test submissions
+  if (typeof fbq !== 'undefined' && !isTest) {
     fbq('track', 'CompleteRegistration', {
       content_name: 'Tax Peace Assessment',
       status: 'complete'
@@ -749,7 +753,8 @@ async function submit() {
   }
 
   // Track form submission with Google Ads
-  if (typeof gtag !== 'undefined') {
+  // Skip tracking for test submissions
+  if (typeof gtag !== 'undefined' && !isTest) {
     gtag('event', 'conversion', {
       send_to: 'AW-17497432656',
       event_category: 'form_submission',
