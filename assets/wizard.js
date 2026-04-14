@@ -228,6 +228,40 @@ const progressBar = document.getElementById('progressBar');
 
 const params = new URLSearchParams(location.search);
 
+// === UTM capture & persistence ===
+// Captures UTMs on first touch, persists across the session so they survive
+// internal navigation and are attached to the final lead submission.
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid'];
+function captureUtms() {
+  let stored = {};
+  try {
+    stored = JSON.parse(sessionStorage.getItem('tpn_utms') || '{}');
+  } catch (_) {}
+
+  let updated = false;
+  UTM_KEYS.forEach(k => {
+    const v = params.get(k);
+    if (v && !stored[k]) {
+      stored[k] = v;
+      updated = true;
+    }
+  });
+
+  // Landing page + referrer on first touch
+  if (!stored.landing_page) {
+    stored.landing_page = window.location.pathname;
+    stored.referrer = document.referrer || '';
+    stored.first_touch_ts = new Date().toISOString();
+    updated = true;
+  }
+
+  if (updated) {
+    try { sessionStorage.setItem('tpn_utms', JSON.stringify(stored)); } catch (_) {}
+  }
+  return stored;
+}
+const utmData = captureUtms();
+
 // Meta tracking - capture fbclid and cookies for better attribution
 const fbclid = params.get('fbclid') || '';
 const getCookie = (name) => {
@@ -236,6 +270,20 @@ const getCookie = (name) => {
 };
 const fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
 const fbp = getCookie('_fbp') || '';
+
+// GA4 client_id — extracted from the _ga cookie (format: GA1.1.<client_id>.<ts>)
+// Used server-side so the MP event attributes to the same user as the browser.
+function getGaClientId() {
+  const ga = getCookie('_ga');
+  if (!ga) return '';
+  const parts = ga.split('.');
+  return parts.length >= 4 ? `${parts[2]}.${parts[3]}` : '';
+}
+// GA4 session_id — from the stream-specific cookie _ga_<stream_id>, format GS1.1.<session_id>.<...>
+function getGaSessionId() {
+  const m = document.cookie.match(/_ga_[A-Z0-9]+=GS\d\.\d\.(\d+)/);
+  return m ? m[1] : '';
+}
 
 // === Google Apps Script integration ===
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfDJy9Lfk5sZQsA6ccMJOf2XTvcNAeoMHdb7JhKqHtKQ6cYMUkLnuKKZMVyehTS4Hd/exec';
@@ -653,14 +701,23 @@ function advance(value) {
 
   data[s.id] = value;
 
-  // Track step completion with Google Ads
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'form_step_complete', {
-      step_number: stepIndex + 1,
-      step_id: s.id,
-      step_title: s.title,
-      user_response: displayValue
-    });
+  // Track step completion (GA4 micro-conversion)
+  trackEvent('form_step_complete', {
+    step_number: stepIndex + 1,
+    step_id: s.id,
+    step_title: s.title,
+    user_response: displayValue,
+    tax_problem: data.tax_problem || '',
+    debt_amount: data.back_taxes_amount || '',
+    service_type: data.tax_problem || ''
+  });
+
+  // Milestone events — easier to mark as Key Events in GA4
+  if (s.id === 'tax_problem') {
+    trackEvent('funnel_qualified', { tax_problem: value });
+  }
+  if (s.id === 'state') {
+    trackEvent('funnel_state_selected', { state: value });
   }
 
   // If this was the tax_problem question, rebuild the path
@@ -727,7 +784,20 @@ async function submit() {
     page_url: window.location.href,
     fbclid: fbclid,
     fbc: fbc,
-    fbp: fbp
+    fbp: fbp,
+    // UTM attribution (first-touch, persisted via sessionStorage)
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || '',
+    utm_content: utmData.utm_content || '',
+    utm_term: utmData.utm_term || '',
+    gclid: utmData.gclid || '',
+    landing_page: utmData.landing_page || '',
+    referrer: utmData.referrer || '',
+    first_touch_ts: utmData.first_touch_ts || '',
+    // GA4 identifiers for server-side Measurement Protocol attribution
+    ga_client_id: getGaClientId(),
+    ga_session_id: getGaSessionId()
   };
 
   const payload = mappedData;
@@ -765,6 +835,17 @@ async function submit() {
       tax_problem: data.tax_problem,
       state: data.state,
       tax_jurisdiction: data.tax_jurisdiction
+    });
+
+    // GA4 standard lead event — mark as Key Event in GA4 admin
+    trackEvent('generate_lead', {
+      currency: 'USD',
+      value: 1,
+      tax_problem: data.tax_problem || '',
+      debt_amount: data.back_taxes_amount || '',
+      state: data.state || '',
+      tax_jurisdiction: data.tax_jurisdiction || '',
+      lead_id: eventId
     });
   }
 
@@ -828,7 +909,55 @@ function showIrsContactInfo() {
   }, 400);
 }
 
+// === GA4 micro-conversion tracking ===
+function trackEvent(name, params) {
+  if (typeof gtag === 'undefined') return;
+  gtag('event', name, Object.assign({
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || ''
+  }, params || {}));
+}
+
+// Fire chatbot_start once when the wizard boots
+let chatbotStartFired = false;
+function fireChatbotStart() {
+  if (chatbotStartFired) return;
+  chatbotStartFired = true;
+  trackEvent('chatbot_start', {
+    page_location: window.location.href,
+    page_referrer: document.referrer
+  });
+}
+
+// Scroll depth milestones (25 / 50 / 75 / 100)
+const scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+function onScroll() {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop + window.innerHeight) / h.scrollHeight * 100;
+  Object.keys(scrollMilestones).forEach(pct => {
+    if (!scrollMilestones[pct] && scrolled >= Number(pct)) {
+      scrollMilestones[pct] = true;
+      trackEvent('scroll_depth', { percent_scrolled: Number(pct) });
+    }
+  });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+
+// Phone click tracking (catches every tel: link on the page)
+document.addEventListener('click', (e) => {
+  const link = e.target.closest && e.target.closest('a[href^="tel:"]');
+  if (link) {
+    trackEvent('phone_click', {
+      phone_number: link.getAttribute('href').replace('tel:', ''),
+      link_text: (link.textContent || '').trim().slice(0, 80),
+      location: window.location.pathname
+    });
+  }
+});
+
 // Initialize with a slight delay for the first question
 setTimeout(() => {
+  fireChatbotStart();
   render();
 }, 800);

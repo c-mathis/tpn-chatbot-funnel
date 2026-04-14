@@ -7,6 +7,8 @@
 // - META_ACCESS_TOKEN (secret)
 // - META_PIXEL_ID (secret)
 // - GOOGLE_SHEETS_URL (optional)
+// - GA4_MEASUREMENT_ID (e.g. "G-RFVN78XR1Q")
+// - GA4_API_SECRET (secret from GA4 Admin → Data Streams → MP API secrets)
 
 export default {
   async fetch(request, env, ctx) {
@@ -142,6 +144,16 @@ export default {
 
       // Meta Conversions API disabled - browser pixel tracking is sufficient
       // Browser-side fbq('track', 'CompleteRegistration') handles conversion tracking
+
+      // === GA4 Measurement Protocol (server-side) ===
+      // Fires generate_lead server-side so we still capture the conversion when
+      // ad blockers / iOS ITP block the browser gtag call. Uses the same
+      // client_id the browser used, so it attributes to the same user session.
+      // Skip test submissions.
+      const isTest = data.page_url && data.page_url.includes('test=true');
+      if (!isTest && env.GA4_MEASUREMENT_ID && env.GA4_API_SECRET && data.ga_client_id) {
+        ctx.waitUntil(sendGa4Event(env, data, eventId));
+      }
 
       // Optional: Send to Google Sheets (keep existing functionality)
       if (env.GOOGLE_SHEETS_URL) {
@@ -289,4 +301,66 @@ async function incrementBuyerLeads(env, buyerId) {
   await env.DB.prepare(
     'UPDATE buyers SET total_leads = total_leads + 1 WHERE id = ?'
   ).bind(buyerId).run();
+}
+
+/**
+ * Send generate_lead event to GA4 via Measurement Protocol.
+ * Docs: https://developers.google.com/analytics/devguides/collection/protocol/ga4
+ *
+ * Uses the browser's client_id so events merge with the same user's session.
+ * Fires async via ctx.waitUntil — failures are logged but do not block the response.
+ */
+async function sendGa4Event(env, data, eventId) {
+  try {
+    const endpoint = `https://www.google-analytics.com/mp/collect?measurement_id=${env.GA4_MEASUREMENT_ID}&api_secret=${env.GA4_API_SECRET}`;
+
+    const debtAmount = data.debt_amount || data.back_taxes_amount || data.notice_amount || '';
+
+    const payload = {
+      client_id: data.ga_client_id,
+      // non_personalized_ads false so Google Ads can use these events for audiences
+      non_personalized_ads: false,
+      events: [{
+        name: 'generate_lead',
+        params: {
+          // Standard GA4 ecommerce params for a lead
+          currency: 'USD',
+          value: 1,
+          lead_id: eventId,
+          // Session stitching — if provided, GA4 will attach to this session
+          session_id: data.ga_session_id || undefined,
+          engagement_time_msec: 1,
+          // Custom dimensions (must be registered in GA4 Admin → Custom definitions)
+          tax_problem: data.tax_problem || '',
+          tax_jurisdiction: data.tax_jurisdiction || '',
+          state: data.state || '',
+          debt_amount: debtAmount,
+          // Attribution
+          source: data.utm_source || '',
+          medium: data.utm_medium || '',
+          campaign: data.utm_campaign || '',
+          content: data.utm_content || '',
+          term: data.utm_term || '',
+          page_location: data.page_url || '',
+          page_referrer: data.referrer || '',
+          // Tag this event so you can filter it in GA4 as server-side
+          delivery_method: 'server'
+        }
+      }]
+    };
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      console.warn('GA4 MP returned non-OK:', res.status, await res.text());
+    } else {
+      console.log('GA4 MP generate_lead sent:', eventId);
+    }
+  } catch (err) {
+    console.error('GA4 Measurement Protocol error:', err);
+  }
 }
