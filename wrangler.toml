@@ -17,6 +17,9 @@ id = "b34e0863466046d2ad779c2a566ce469"
 # wrangler secret put META_ACCESS_TOKEN
 # wrangler secret put META_PIXEL_ID
 # wrangler secret put GOOGLE_SHEETS_URL (optional)
+# wrangler secret put GA4_API_SECRET
+# wrangler secret put RESEND_API_KEY
+# wrangler secret put NOTIFY_EMAILS  (comma-separated, e.g. "cam@example.com,partner@firm.com")
 
 [env.production]
 name = "tax-peace-conversions"

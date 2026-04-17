@@ -73,7 +73,7 @@ const QUESTIONS = {
     type: 'pills',
     title: 'How many years are unfiled?',
     sub: '',
-    options: ['Current year - 1 year', '2–3 years', '4–5 years', '6+ years'],
+    options: ['1 year', '2–3 years', '4–5 years', '6+ years'],
     required: true
   },
   unfiled_refund: {
@@ -228,6 +228,40 @@ const progressBar = document.getElementById('progressBar');
 
 const params = new URLSearchParams(location.search);
 
+// === UTM capture & persistence ===
+// Captures UTMs on first touch, persists across the session so they survive
+// internal navigation and are attached to the final lead submission.
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid'];
+function captureUtms() {
+  let stored = {};
+  try {
+    stored = JSON.parse(sessionStorage.getItem('tpn_utms') || '{}');
+  } catch (_) {}
+
+  let updated = false;
+  UTM_KEYS.forEach(k => {
+    const v = params.get(k);
+    if (v && !stored[k]) {
+      stored[k] = v;
+      updated = true;
+    }
+  });
+
+  // Landing page + referrer on first touch
+  if (!stored.landing_page) {
+    stored.landing_page = window.location.pathname;
+    stored.referrer = document.referrer || '';
+    stored.first_touch_ts = new Date().toISOString();
+    updated = true;
+  }
+
+  if (updated) {
+    try { sessionStorage.setItem('tpn_utms', JSON.stringify(stored)); } catch (_) {}
+  }
+  return stored;
+}
+const utmData = captureUtms();
+
 // Meta tracking - capture fbclid and cookies for better attribution
 const fbclid = params.get('fbclid') || '';
 const getCookie = (name) => {
@@ -237,9 +271,23 @@ const getCookie = (name) => {
 const fbc = getCookie('_fbc') || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : '');
 const fbp = getCookie('_fbp') || '';
 
-// === Google Apps Script integration ===
-const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfDJy9Lfk5sZQsA6ccMJOf2XTvcNAeoMHdb7JhKqHtKQ6cYMUkLnuKKZMVyehTS4Hd/exec';
-const NOTIFY_EMAILS = 'cameron@axesagency.com';
+// GA4 client_id — extracted from the _ga cookie (format: GA1.1.<client_id>.<ts>)
+// Used server-side so the MP event attributes to the same user as the browser.
+function getGaClientId() {
+  const ga = getCookie('_ga');
+  if (!ga) return '';
+  const parts = ga.split('.');
+  return parts.length >= 4 ? `${parts[2]}.${parts[3]}` : '';
+}
+// GA4 session_id — from the stream-specific cookie _ga_<stream_id>, format GS1.1.<session_id>.<...>
+function getGaSessionId() {
+  const m = document.cookie.match(/_ga_[A-Z0-9]+=GS\d\.\d\.(\d+)/);
+  return m ? m[1] : '';
+}
+
+// === Google Apps Script integration (DISABLED — replaced by Resend via Worker) ===
+const GAS_WEB_APP_URL = '';
+const NOTIFY_EMAILS = '';
 
 // State
 let currentPath = [];
@@ -253,12 +301,6 @@ function buildPath() {
   // If we have a tax_problem answer, add the conditional steps
   if (data.tax_problem && FLOWS[data.tax_problem]) {
     currentPath = currentPath.concat(FLOWS[data.tax_problem]);
-  }
-
-  // If they selected "I'm not sure" → "I haven't filed or need help filing", add unfiled years
-  if (data.not_sure_clarify === "I haven't filed or need help filing") {
-    const insertIndex = currentPath.indexOf('not_sure_clarify') + 1;
-    currentPath.splice(insertIndex, 0, 'unfiled_years', 'unfiled_self_employed');
   }
 
   // Add universal steps
@@ -659,41 +701,33 @@ function advance(value) {
 
   data[s.id] = value;
 
-  // Track step completion with Google Ads
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'form_step_complete', {
-      step_number: stepIndex + 1,
-      step_id: s.id,
-      step_title: s.title,
-      user_response: displayValue
-    });
+  // Track step completion (GA4 micro-conversion)
+  trackEvent('form_step_complete', {
+    step_number: stepIndex + 1,
+    step_id: s.id,
+    step_title: s.title,
+    user_response: displayValue,
+    tax_problem: data.tax_problem || '',
+    debt_amount: data.back_taxes_amount || '',
+    service_type: data.tax_problem || ''
+  });
+
+  // Milestone events — easier to mark as Key Events in GA4
+  if (s.id === 'tax_problem') {
+    trackEvent('funnel_qualified', { tax_problem: value });
+  }
+  if (s.id === 'state') {
+    trackEvent('funnel_state_selected', { state: value });
   }
 
-  // If this was the tax_problem or not_sure_clarify question, rebuild the path
-  if (s.id === 'tax_problem' || s.id === 'not_sure_clarify') {
+  // If this was the tax_problem question, rebuild the path
+  if (s.id === 'tax_problem') {
     buildPath();
   }
 
   stepIndex++;
 
-  // After completing step 3, show Kirk's phone message
-  if (stepIndex === 3) {
-    setTimeout(() => {
-      const phoneNumbers = [
-        '866-466-7012',
-        '866-314-3628'
-      ];
-      const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
-      const phoneMessage = `Or if you'd prefer to speak with someone right away, call us at <a href="tel:+1${selectedPhone.replace(/-/g, '')}" style="color: #7C3AED; font-weight: bold; text-decoration: none;">${selectedPhone}</a>`;
-
-      addBotMessage('Need immediate help?', phoneMessage);
-
-      // Then continue to next step after a brief delay
-      setTimeout(() => {
-        render();
-      }, 2000);
-    }, 800);
-  } else if (stepIndex < getTotalSteps()) {
+  if (stepIndex < getTotalSteps()) {
     setTimeout(() => {
       render();
     }, 800);
@@ -730,19 +764,43 @@ async function postToGoogle(payload) {
 }
 
 async function submit() {
-  // Get session from localStorage
-  const session = JSON.parse(localStorage.getItem('tpn_session') || '{}');
-
-  const payload = {
-    ...data,
-    session_id: session.session_id,
+  // Map chatbot fields to database fields
+  const mappedData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phone: data.phone,
+    state: data.state,
+    tax_problem: data.tax_problem,
+    tax_jurisdiction: data.tax_jurisdiction,
+    // Map conditional fields to standardized names
+    debt_amount: data.back_taxes_amount || data.notice_amount || '',
+    collection_actions: Array.isArray(data.back_taxes_actions) ? data.back_taxes_actions.join(', ') : (data.back_taxes_actions || ''),
+    unfiled_years: data.unfiled_years || '',
+    employment_status: data.filing_status || data.business_structure || '',
+    contactTime: 'Any time', // Default since we don't ask this in current flow
     ts: new Date().toISOString(),
     source: 'Tax Peace Now Chatbot',
     page_url: window.location.href,
     fbclid: fbclid,
     fbc: fbc,
-    fbp: fbp
+    fbp: fbp,
+    // UTM attribution (first-touch, persisted via sessionStorage)
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || '',
+    utm_content: utmData.utm_content || '',
+    utm_term: utmData.utm_term || '',
+    gclid: utmData.gclid || '',
+    landing_page: utmData.landing_page || '',
+    referrer: utmData.referrer || '',
+    first_touch_ts: utmData.first_touch_ts || '',
+    // GA4 identifiers for server-side Measurement Protocol attribution
+    ga_client_id: getGaClientId(),
+    ga_session_id: getGaSessionId()
   };
+
+  const payload = mappedData;
 
   const eventId = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -778,18 +836,28 @@ async function submit() {
       state: data.state,
       tax_jurisdiction: data.tax_jurisdiction
     });
+
+    // GA4 standard lead event — mark as Key Event in GA4 admin
+    trackEvent('generate_lead', {
+      currency: 'USD',
+      value: 1,
+      tax_problem: data.tax_problem || '',
+      debt_amount: data.back_taxes_amount || '',
+      state: data.state || '',
+      tax_jurisdiction: data.tax_jurisdiction || '',
+      lead_id: eventId
+    });
   }
 
   // Send to Cloudflare Worker
   try {
-    await fetch('https://tax-peace-conversions.cameron-07f.workers.dev', {
+    await fetch('https://tax-peace-conversions.cameron-07f.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, event_id: eventId })
     });
   } catch (error) {
     console.warn('Cloudflare Worker submission failed:', error);
-    postToGoogle(payload);
   }
 
   try {
@@ -840,7 +908,55 @@ function showIrsContactInfo() {
   }, 400);
 }
 
+// === GA4 micro-conversion tracking ===
+function trackEvent(name, params) {
+  if (typeof gtag === 'undefined') return;
+  gtag('event', name, Object.assign({
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || ''
+  }, params || {}));
+}
+
+// Fire chatbot_start once when the wizard boots
+let chatbotStartFired = false;
+function fireChatbotStart() {
+  if (chatbotStartFired) return;
+  chatbotStartFired = true;
+  trackEvent('chatbot_start', {
+    page_location: window.location.href,
+    page_referrer: document.referrer
+  });
+}
+
+// Scroll depth milestones (25 / 50 / 75 / 100)
+const scrollMilestones = { 25: false, 50: false, 75: false, 100: false };
+function onScroll() {
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop + window.innerHeight) / h.scrollHeight * 100;
+  Object.keys(scrollMilestones).forEach(pct => {
+    if (!scrollMilestones[pct] && scrolled >= Number(pct)) {
+      scrollMilestones[pct] = true;
+      trackEvent('scroll_depth', { percent_scrolled: Number(pct) });
+    }
+  });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+
+// Phone click tracking (catches every tel: link on the page)
+document.addEventListener('click', (e) => {
+  const link = e.target.closest && e.target.closest('a[href^="tel:"]');
+  if (link) {
+    trackEvent('phone_click', {
+      phone_number: link.getAttribute('href').replace('tel:', ''),
+      link_text: (link.textContent || '').trim().slice(0, 80),
+      location: window.location.pathname
+    });
+  }
+});
+
 // Initialize with a slight delay for the first question
 setTimeout(() => {
+  fireChatbotStart();
   render();
 }, 800);
