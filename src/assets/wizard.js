@@ -338,14 +338,7 @@ function clearPreviousConversation() {
 }
 
 function addBotMessage(title, sub, isNewConversation = false) {
-  if (isNewConversation && stepIndex > 0) {
-    clearPreviousConversation();
-    setTimeout(() => {
-      showBotMessage(title, sub);
-    }, 400);
-  } else {
-    showBotMessage(title, sub);
-  }
+  showBotMessage(title, sub);
 }
 
 function showBotMessage(title, sub) {

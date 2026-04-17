@@ -1818,7 +1818,12 @@ h1, .h1 {
   gap: 16px;
   min-height: 0;
   order: 1;
-  justify-content: flex-end;
+}
+
+/* Pushes messages to bottom when few, allows natural scrolling when many */
+.chat-messages::before {
+  content: '';
+  flex: 1;
 }
 
 @media (max-width: 480px) {
