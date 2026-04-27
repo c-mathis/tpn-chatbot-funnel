@@ -201,8 +201,8 @@ const QUESTIONS = {
   contact: {
     id: 'contact',
     type: 'contact',
-    title: 'Last step! Where can we reach you?',
-    sub: 'We\'ll be in touch shortly to discuss your options.',
+    title: 'Great! Who am I talking to?',
+    sub: 'We\'ll use this to send you personalized options and follow up.',
     required: true
   }
 };
@@ -216,7 +216,9 @@ const FLOWS = {
   'I\'m not sure — I just know I need help': ['not_sure_clarify']
 };
 
-const UNIVERSAL_STEPS = ['state', 'contact'];
+// Contact collected early, state at the end
+const EARLY_STEPS = ['contact'];
+const FINAL_STEPS = ['state'];
 
 // DOM elements
 const stepLabel = document.getElementById('stepLabel');
@@ -298,13 +300,16 @@ function buildPath() {
   // Start with tax_problem
   currentPath = ['tax_problem'];
 
-  // If we have a tax_problem answer, add the conditional steps
+  // Add contact info collection EARLY (right after tax_problem)
+  currentPath = currentPath.concat(EARLY_STEPS);
+
+  // If we have a tax_problem answer, add the conditional qualifying steps
   if (data.tax_problem && FLOWS[data.tax_problem]) {
     currentPath = currentPath.concat(FLOWS[data.tax_problem]);
   }
 
-  // Add universal steps
-  currentPath = currentPath.concat(UNIVERSAL_STEPS);
+  // Add final steps (state)
+  currentPath = currentPath.concat(FINAL_STEPS);
 
   return currentPath;
 }
@@ -529,10 +534,9 @@ function buildControlsForStep(s) {
 
 function buildContactStep() {
   const wrap = document.createElement('div');
-  wrap.style.display = 'grid';
-  wrap.style.gridTemplateColumns = '1fr 1fr';
-  wrap.style.gap = '8px';
-  wrap.className = 'grid2';
+  wrap.style.display = 'flex';
+  wrap.style.flexDirection = 'column';
+  wrap.style.gap = '12px';
 
   const mkField = (id, node) => {
     node.dataset.id = id;
@@ -546,10 +550,24 @@ function buildContactStep() {
     value: val || ''
   }));
 
-  const firstName = mkInput('firstName', 'text', 'First name', data.firstName);
-  const lastName = mkInput('lastName', 'text', 'Last name', data.lastName);
-  const phone = mkInput('phone', 'tel', 'Phone number', data.phone);
+  const fullName = mkInput('fullName', 'text', 'Full name', data.fullName || (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : ''));
   const email = mkInput('email', 'email', 'Email address', data.email);
+  const phone = mkInput('phone', 'tel', 'Phone number', data.phone);
+
+  // Track field-level abandonment for analytics
+  const trackFieldAbandonment = (fieldName, fieldValue) => {
+    if (!fieldValue || fieldValue.trim().length === 0) {
+      trackEvent('contact_field_skipped', {
+        field_name: fieldName,
+        step: 'contact',
+        tax_problem: data.tax_problem || '',
+        state: data.state || ''
+      });
+    }
+  };
+
+  fullName.addEventListener('blur', () => trackFieldAbandonment('fullName', fullName.value));
+  email.addEventListener('blur', () => trackFieldAbandonment('email', email.value));
 
   // Phone formatting
   const digits = s => (s || '').replace(/\D/g, '');
@@ -566,9 +584,10 @@ function buildContactStep() {
   }
 
   phone.addEventListener('input', maskPhone);
-  phone.addEventListener('blur', maskPhone);
-
-  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  phone.addEventListener('blur', () => {
+    maskPhone();
+    trackFieldAbandonment('phone', phone.value);
+  });
 
   function setError(el, msg) {
     el.classList.add('error');
@@ -592,7 +611,6 @@ function buildContactStep() {
   consent.style.alignItems = 'flex-start';
   consent.style.gap = '8px';
   consent.style.fontSize = '13px';
-  consent.style.gridColumn = '1 / -1';
   consent.style.lineHeight = '1.4';
 
   const cb = document.createElement('input');
@@ -604,30 +622,25 @@ function buildContactStep() {
   consent.appendChild(cb);
   consent.appendChild(document.createTextNode('I agree to be contacted about my tax situation and accept the Privacy Policy.'));
 
-  const cell = (node, full = false) => {
-    const c = document.createElement('div');
-    if (full) c.style.gridColumn = '1 / -1';
-    c.appendChild(node);
-    return c;
-  };
-
-  wrap.appendChild(cell(firstName));
-  wrap.appendChild(cell(lastName));
-  wrap.appendChild(cell(phone));
-  wrap.appendChild(cell(email));
-  wrap.appendChild(cell(consent, true));
+  wrap.appendChild(fullName);
+  wrap.appendChild(email);
+  wrap.appendChild(phone);
+  wrap.appendChild(consent);
   controls.appendChild(wrap);
 
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
   nextBtn.onclick = function () {
-    [firstName, lastName, phone, email].forEach(clearError);
+    [fullName, email, phone].forEach(clearError);
     let ok = true;
 
-    if (!firstName.value.trim()) {
-      setError(firstName, 'First name is required');
+    if (!fullName.value.trim()) {
+      setError(fullName, 'Full name is required');
       ok = false;
     }
-    if (!lastName.value.trim()) {
-      setError(lastName, 'Last name is required');
+
+    if (!email.value.trim() || !emailRe.test(email.value)) {
+      setError(email, 'Please enter a valid email address');
       ok = false;
     }
 
@@ -637,11 +650,6 @@ function buildContactStep() {
       ok = false;
     } else {
       phone.value = formatPhone(d);
-    }
-
-    if (!email.value.trim() || !emailRe.test(email.value)) {
-      setError(email, 'Please enter a valid email address');
-      ok = false;
     }
 
     if (!cb.checked) {
@@ -660,17 +668,42 @@ function buildContactStep() {
 
     if (!ok) return;
 
-    data.firstName = firstName.value.trim();
-    data.lastName = lastName.value.trim();
-    data.name = `${data.firstName} ${data.lastName}`;
-    data.phone = formatPhone(digits(phone.value));
+    // Parse full name into first/last for backend compatibility
+    const nameParts = fullName.value.trim().split(' ');
+    data.firstName = nameParts[0];
+    data.lastName = nameParts.slice(1).join(' ') || nameParts[0]; // If only one word, use it for both
+    data.fullName = fullName.value.trim();
+    data.name = data.fullName;
     data.email = email.value.trim();
+    data.phone = formatPhone(digits(phone.value));
     data.terms = cb.checked;
 
     submit();
   };
 
   backBtn.onclick = back;
+}
+
+function getValueReinforcementMessage() {
+  const taxProblem = data.tax_problem || '';
+  const debtAmount = data.back_taxes_amount || '';
+
+  if (taxProblem.includes('owe money')) {
+    if (debtAmount.includes('$10,000') || debtAmount.includes('$20,000') || debtAmount.includes('$30,000') || debtAmount.includes('$40,000') || debtAmount.includes('$50,000')) {
+      return 'Great! Based on your situation, you may qualify for the <strong>IRS Fresh Start Program</strong> or an <strong>Offer in Compromise</strong>. Let me connect you with a specialist.';
+    }
+    return 'Perfect! Based on your debt amount, you may qualify for <strong>tax relief programs</strong> including installment agreements and penalty reduction. Let me connect you with a specialist.';
+  }
+
+  if (taxProblem.includes('unfiled')) {
+    return 'Excellent! We can help you get caught up on unfiled returns and potentially <strong>reduce penalties</strong>. Let me connect you with a specialist.';
+  }
+
+  if (taxProblem.includes('notice')) {
+    return 'Good news! We handle IRS notices daily and can help you <strong>respond properly and protect your rights</strong>. Let me connect you with a specialist.';
+  }
+
+  return 'Great! Based on your situation, we can help. Let me connect you with a tax specialist who handles cases like yours.';
 }
 
 function back() {
@@ -728,9 +761,22 @@ function advance(value) {
   stepIndex++;
 
   if (stepIndex < getTotalSteps()) {
-    setTimeout(() => {
-      render();
-    }, 800);
+    // Check if next step is state (final step) - show value reinforcement message first
+    buildPath();
+    const nextStep = QUESTIONS[currentPath[stepIndex]];
+
+    if (nextStep && nextStep.id === 'state') {
+      setTimeout(() => {
+        addBotMessage('Perfect!', getValueReinforcementMessage(), true);
+        setTimeout(() => {
+          render();
+        }, 1500);
+      }, 800);
+    } else {
+      setTimeout(() => {
+        render();
+      }, 800);
+    }
   } else {
     setTimeout(() => {
       addBotMessage('Perfect!', 'Processing your information...', true);
