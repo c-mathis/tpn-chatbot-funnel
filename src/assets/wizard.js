@@ -534,8 +534,8 @@ function buildControlsForStep(s) {
 
 function buildContactStep() {
   const wrap = document.createElement('div');
-  wrap.style.display = 'flex';
-  wrap.style.flexDirection = 'column';
+  wrap.style.display = 'grid';
+  wrap.style.gridTemplateColumns = '1fr 1fr';
   wrap.style.gap = '12px';
 
   const mkField = (id, node) => {
@@ -550,7 +550,8 @@ function buildContactStep() {
     value: val || ''
   }));
 
-  const fullName = mkInput('fullName', 'text', 'Full name', data.fullName || (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : ''));
+  const firstName = mkInput('firstName', 'text', 'First name', data.firstName);
+  const lastName = mkInput('lastName', 'text', 'Last name', data.lastName);
   const email = mkInput('email', 'email', 'Email address', data.email);
   const phone = mkInput('phone', 'tel', 'Phone number', data.phone);
 
@@ -566,7 +567,8 @@ function buildContactStep() {
     }
   };
 
-  fullName.addEventListener('blur', () => trackFieldAbandonment('fullName', fullName.value));
+  firstName.addEventListener('blur', () => trackFieldAbandonment('firstName', firstName.value));
+  lastName.addEventListener('blur', () => trackFieldAbandonment('lastName', lastName.value));
   email.addEventListener('blur', () => trackFieldAbandonment('email', email.value));
 
   // Phone formatting
@@ -622,7 +624,13 @@ function buildContactStep() {
   consent.appendChild(cb);
   consent.appendChild(document.createTextNode('I agree to be contacted about my tax situation and accept the Privacy Policy.'));
 
-  wrap.appendChild(fullName);
+  // Make email, phone, and consent full width
+  email.style.gridColumn = '1 / -1';
+  phone.style.gridColumn = '1 / -1';
+  consent.style.gridColumn = '1 / -1';
+
+  wrap.appendChild(firstName);
+  wrap.appendChild(lastName);
   wrap.appendChild(email);
   wrap.appendChild(phone);
   wrap.appendChild(consent);
@@ -631,11 +639,16 @@ function buildContactStep() {
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
   nextBtn.onclick = function () {
-    [fullName, email, phone].forEach(clearError);
+    [firstName, lastName, email, phone].forEach(clearError);
     let ok = true;
 
-    if (!fullName.value.trim()) {
-      setError(fullName, 'Full name is required');
+    if (!firstName.value.trim()) {
+      setError(firstName, 'First name is required');
+      ok = false;
+    }
+
+    if (!lastName.value.trim()) {
+      setError(lastName, 'Last name is required');
       ok = false;
     }
 
@@ -668,12 +681,9 @@ function buildContactStep() {
 
     if (!ok) return;
 
-    // Parse full name into first/last for backend compatibility
-    const nameParts = fullName.value.trim().split(' ');
-    data.firstName = nameParts[0];
-    data.lastName = nameParts.slice(1).join(' ') || nameParts[0]; // If only one word, use it for both
-    data.fullName = fullName.value.trim();
-    data.name = data.fullName;
+    data.firstName = firstName.value.trim();
+    data.lastName = lastName.value.trim();
+    data.name = `${data.firstName} ${data.lastName}`;
     data.email = email.value.trim();
     data.phone = formatPhone(digits(phone.value));
     data.terms = cb.checked;
