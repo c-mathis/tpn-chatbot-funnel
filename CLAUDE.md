@@ -227,32 +227,9 @@ AI-powered email 1hr after form abandonment: "We noticed you started your tax as
 
 ---
 
-## Pending Setup Tasks
+## Pending Tasks
 
-### Google Search Console MCP Integration
-
-**Status:** 🔴 Not configured
-**Priority:** Medium
-**Setup time:** 5-10 minutes
-**Guide:** `/Users/beef/Repository/tpn-funnel/SETUP_GSC_MCP.md`
-
-**What this enables:**
-- Direct GSC data access through Claude
-- Real-time keyword performance analysis
-- Indexing status monitoring
-- CTR optimization opportunities
-- Automated sitemap validation
-
-**Quick setup:**
-1. Enable Search Console API in Google Cloud Console
-2. Create OAuth credentials (Desktop app)
-3. Download `client_secret.json` → `~/.config/gsc-mcp/`
-4. Run: `claude mcp add gsc --transport stdio --scope user -- uvx mcp-gsc`
-5. Restart Claude Desktop
-
-**Helper scripts created:**
-- `setup-gsc-oauth.js` - Fully automated Playwright script
-- `setup-gsc-simple.js` - Opens browser to right pages with instructions
+**📋 See Obsidian:** `/Users/beef/repository/Obsidian Vault/MathisLLC/_inbox/` for active tasks and setup items
 
 ---
 
