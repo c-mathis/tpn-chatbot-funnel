@@ -70,28 +70,61 @@ export default {
       // Use event ID from client for deduplication
       const eventId = data.event_id;
 
+      // === DUPLICATE DETECTION ===
+      // Check if this email or phone already exists in the database
+      // If found, return the existing buyer assignment without creating a new lead
+      try {
+        const existingLead = await env.DB.prepare(`
+          SELECT id, buyer_id, email, phone, created_at
+          FROM leads
+          WHERE email = ? OR phone = ?
+          LIMIT 1
+        `).bind(email, phone).first();
+
+        if (existingLead) {
+          console.log('Duplicate lead detected:', { email, phone, existing_id: existingLead.id });
+
+          // Look up buyer info for the duplicate response
+          const existingBuyer = await env.DB.prepare(
+            'SELECT id, name, phone_number FROM buyers WHERE id = ?'
+          ).bind(existingLead.buyer_id).first();
+
+          return new Response(
+            JSON.stringify({
+              success: true,
+              duplicate: true,
+              buyer: existingBuyer,
+              message: 'We already have your information on file.'
+            }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+              },
+            }
+          );
+        }
+      } catch (dupCheckError) {
+        console.error('Duplicate check failed, proceeding with insertion:', dupCheckError);
+        // Continue with normal flow if duplicate check fails
+      }
+
       // Smart lead routing based on form answers
       const buyer = await assignBuyerSmart(data, env);
       const buyerId = buyer?.id;
 
-      // Store lead in D1 database
-      await env.DB.prepare(`
-        INSERT INTO leads (
-          event_id, first_name, last_name, email, phone, state,
-          tax_problem, tax_jurisdiction, tax_data,
-          buyer_id, assigned_at, status, source, page_url,
-          fbclid, fbc, fbp
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'new', ?, ?, ?, ?, ?)
-      `).bind(
-        eventId || `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        firstName,
-        lastName,
+      // Prepare lead data object for fallback
+      const leadData = {
+        event_id: eventId || `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        first_name: firstName,
+        last_name: lastName,
         email,
         phone,
-        state || 'Not specified',
-        tax_problem || 'Not specified',
-        tax_jurisdiction || 'Not specified',
-        JSON.stringify({
+        state: state || 'Not specified',
+        tax_problem: tax_problem || 'Not specified',
+        tax_jurisdiction: tax_jurisdiction || 'Not specified',
+        tax_data: JSON.stringify({
           debt_amount: debt_amount || back_taxes_amount || notice_amount || '',
           tax_type: tax_type || '',
           employment_status: employment_status || filing_status || business_structure || '',
@@ -99,13 +132,59 @@ export default {
           unfiled_years: unfiled_years || '',
           contactTime: contactTime || 'Any time'
         }),
-        buyerId,
+        buyer_id: buyerId,
         source,
-        data.page_url || 'https://taxpeacenow.com',
-        fbclid || null,
-        fbc || null,
-        fbp || null
-      ).run();
+        page_url: data.page_url || 'https://taxpeacenow.com',
+        fbclid: fbclid || null,
+        fbc: fbc || null,
+        fbp: fbp || null,
+        created_at: new Date().toISOString()
+      };
+
+      // Try to store lead in D1 database (PRIMARY)
+      let d1Success = false;
+      try {
+        await env.DB.prepare(`
+          INSERT INTO leads (
+            event_id, first_name, last_name, email, phone, state,
+            tax_problem, tax_jurisdiction, tax_data,
+            buyer_id, assigned_at, status, source, page_url,
+            fbclid, fbc, fbp
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, 'new', ?, ?, ?, ?, ?)
+        `).bind(
+          leadData.event_id,
+          leadData.first_name,
+          leadData.last_name,
+          leadData.email,
+          leadData.phone,
+          leadData.state,
+          leadData.tax_problem,
+          leadData.tax_jurisdiction,
+          leadData.tax_data,
+          leadData.buyer_id,
+          leadData.source,
+          leadData.page_url,
+          leadData.fbclid,
+          leadData.fbc,
+          leadData.fbp
+        ).run();
+        d1Success = true;
+        console.log('Lead saved to D1 successfully');
+      } catch (d1Error) {
+        console.error('D1 insertion failed, using KV fallback:', d1Error);
+
+        // FALLBACK 1: Save to KV if D1 fails
+        try {
+          const kvKey = `lead_fallback_${leadData.event_id}`;
+          await env.SESSIONS_KV.put(kvKey, JSON.stringify(leadData), {
+            expirationTtl: 604800 // 7 days
+          });
+          console.log('Lead saved to KV fallback successfully');
+        } catch (kvError) {
+          console.error('KV fallback also failed:', kvError);
+          // Continue - we'll still try Google Sheets below
+        }
+      }
 
       // Send Apex Tax Team leads to their Base44 app
       if (buyerId === 1) { // Apex Tax Team
@@ -156,8 +235,10 @@ export default {
         // Confirmation email to the user
         ctx.waitUntil(sendConfirmationEmail(env, data, eventId, buyerPhone));
 
-        // Internal notification to team
-        ctx.waitUntil(sendInternalNotification(env, data, buyerName, eventId));
+        // Internal notification to team - ONLY for Apex Tax Team leads (buyer ID 1)
+        if (buyerId === 1) {
+          ctx.waitUntil(sendInternalNotification(env, data, buyerName, eventId));
+        }
       }
 
       // Meta Conversions API disabled - browser pixel tracking is sufficient
@@ -172,27 +253,35 @@ export default {
         ctx.waitUntil(sendGa4Event(env, data, eventId));
       }
 
-      // Optional: Send to Google Sheets (keep existing functionality)
+      // FALLBACK 2: Always send to Google Sheets (CSV-style backup)
+      // This runs regardless of D1 success/failure for redundancy
       if (env.GOOGLE_SHEETS_URL) {
-        try {
-          await fetch(env.GOOGLE_SHEETS_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify({
-              ...data,
-              ts: new Date().toISOString(),
-              event_id: eventId
-            }),
-          });
-        } catch (e) {
-          console.warn('Google Sheets submission failed:', e);
-        }
+        ctx.waitUntil(
+          (async () => {
+            try {
+              await fetch(env.GOOGLE_SHEETS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify({
+                  ...leadData,
+                  ...data, // Include all original form data
+                  ts: new Date().toISOString(),
+                  d1_saved: d1Success
+                }),
+              });
+              console.log('Lead backed up to Google Sheets');
+            } catch (e) {
+              console.error('Google Sheets backup failed:', e);
+            }
+          })()
+        );
       }
 
       return new Response(
         JSON.stringify({
           success: true,
-          event_id: eventId
+          event_id: eventId,
+          saved_to: d1Success ? 'database' : 'fallback_storage'
         }),
         {
           status: 200,

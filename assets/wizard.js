@@ -907,11 +907,32 @@ async function submit() {
 
   // Send to Cloudflare Worker
   try {
-    await fetch('https://tax-peace-conversions.cameron-07f.workers.dev/', {
+    const response = await fetch('https://tax-peace-conversions.cameron-07f.workers.dev/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, event_id: eventId })
     });
+
+    const result = await response.json();
+
+    // Handle duplicate submission
+    if (result.duplicate) {
+      console.log('Duplicate lead detected, redirecting to duplicate page');
+
+      try {
+        localStorage.setItem('tax_peace_lead', JSON.stringify(payload));
+      } catch (_) {}
+
+      // Redirect to duplicate thank-you page with buyer info
+      const qp = new URLSearchParams({
+        name: data.firstName || 'Friend',
+        buyer_phone: result.buyer?.phone_number || '',
+        buyer_name: result.buyer?.name || ''
+      });
+      const utm = params && params.toString() ? '&' + params.toString() : '';
+      location.href = 'thank-you-duplicate.html?' + qp.toString() + utm;
+      return; // Exit early - no conversion tracking for duplicates
+    }
   } catch (error) {
     console.warn('Cloudflare Worker submission failed:', error);
     postToGoogle(payload);

@@ -1,0 +1,58 @@
+---
+layout: layouts/thank-you.njk
+title: We Have Your Information
+permalink: /thank-you-duplicate.html
+---
+<div class="shell">
+  <div class="body">
+    <div class="content" style="padding-top:40px">
+      <div class="content-inner" style="text-align:center">
+        <div class="h1" style="margin-bottom:12px">We already have your information!</div>
+        <div class="section-sub" style="margin-bottom:24px">
+          Hi <span id="userName">there</span>! We've already received your information and matched you with one of our trusted tax specialists. You should expect a call within one business day.
+        </div>
+
+        <div style="background:var(--brand);color:white;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div style="font-weight:600;margin-bottom:8px;font-size:16px">Need Help Right Away?</div>
+          <div style="font-size:14px;margin-bottom:12px">Call your assigned specialist now</div>
+          <a href="tel:+18664667012" id="phoneNumber" style="color:white;text-decoration:none;font-size:24px;font-weight:bold;display:block">866-466-7012</a>
+        </div>
+
+        <div style="font-size:14px;color:#6b7280;margin-top:24px">
+          If you haven't heard from us yet, give us a call at the number above and we'll connect you right away.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Get buyer info and name from URL params
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get('name');
+  const buyerPhone = params.get('buyer_phone');
+  const buyerName = params.get('buyer_name');
+
+  // Set user name
+  if (name) {
+    document.getElementById('userName').textContent = name;
+  }
+
+  // Set buyer phone number if available
+  const phoneLink = document.getElementById('phoneNumber');
+  if (buyerPhone && buyerPhone.trim() !== '') {
+    // Format the phone number for display and tel: link
+    const phoneDigits = buyerPhone.replace(/\D/g, '');
+    phoneLink.textContent = buyerPhone;
+    phoneLink.href = 'tel:+1' + phoneDigits;
+  } else {
+    // Fallback to default round-robin if buyer phone not available
+    const phoneNumbers = [
+      { display: '866-466-7012', tel: '+18664667012' },
+      { display: '866-314-3628', tel: '+18663143628' }
+    ];
+    const selectedPhone = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+    phoneLink.textContent = selectedPhone.display;
+    phoneLink.href = 'tel:' + selectedPhone.tel;
+  }
+</script>
