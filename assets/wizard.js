@@ -216,9 +216,9 @@ const FLOWS = {
   'I\'m not sure — I just know I need help': ['not_sure_clarify']
 };
 
-// Contact collected early, state at the end
+// Contact collected early, tax_jurisdiction and state at the end
 const EARLY_STEPS = ['contact'];
-const FINAL_STEPS = ['state'];
+const FINAL_STEPS = ['tax_jurisdiction', 'state'];
 
 // DOM elements
 const stepLabel = document.getElementById('stepLabel');
@@ -688,7 +688,10 @@ function buildContactStep() {
     data.phone = formatPhone(digits(phone.value));
     data.terms = cb.checked;
 
-    submit();
+    // Continue to next step instead of submitting
+    addUserMessage(`${data.firstName} ${data.lastName}`);
+    stepIndex++;
+    setTimeout(() => render(), 800);
   };
 
   backBtn.onclick = back;
