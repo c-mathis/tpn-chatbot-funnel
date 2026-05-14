@@ -691,7 +691,7 @@ function buildContactStep() {
     // Continue to next step instead of submitting
     addUserMessage(`${data.firstName} ${data.lastName}`);
     stepIndex++;
-    setTimeout(() => render(), 800);
+    setTimeout(() => render(), 300);
   };
 
   backBtn.onclick = back;
@@ -783,18 +783,18 @@ function advance(value) {
         addBotMessage('Perfect!', getValueReinforcementMessage(), true);
         setTimeout(() => {
           render();
-        }, 1500);
-      }, 800);
+        }, 500);
+      }, 300);
     } else {
       setTimeout(() => {
         render();
-      }, 800);
+      }, 300);
     }
   } else {
     setTimeout(() => {
       addBotMessage('Perfect!', 'Processing your information...', true);
-      setTimeout(submit, 1000);
-    }, 800);
+      setTimeout(submit, 500);
+    }, 300);
   }
 }
 
@@ -869,21 +869,6 @@ async function submit() {
   // Check if user came from Facebook (has fbclid parameter or fbc cookie)
   const isFromFacebook = !!(fbclid || fbc);
 
-  // Track form submission with Meta pixel (with Advanced Matching)
-  // Only track if: NOT a test AND came from Facebook
-  if (typeof fbq !== 'undefined' && !isTest && isFromFacebook) {
-    fbq('track', 'CompleteRegistration', {
-      content_name: 'Tax Peace Assessment',
-      status: 'complete'
-    }, {
-      event_id: eventId,
-      em: data.email?.toLowerCase(),
-      ph: data.phone?.replace(/\D/g, ''),
-      fn: data.firstName?.toLowerCase(),
-      ln: data.lastName?.toLowerCase()
-    });
-  }
-
   // Track form submission with Google Ads
   // Skip tracking for test submissions
   if (typeof gtag !== 'undefined' && !isTest) {
@@ -935,6 +920,21 @@ async function submit() {
       const utm = params && params.toString() ? '&' + params.toString() : '';
       location.href = 'thank-you-duplicate.html?' + qp.toString() + utm;
       return; // Exit early - no conversion tracking for duplicates
+    }
+
+    // Track successful form submission with Meta pixel (AFTER worker confirms save)
+    // Only track if: NOT a test AND came from Facebook AND worker saved successfully
+    if (typeof fbq !== 'undefined' && !isTest && isFromFacebook) {
+      fbq('track', 'CompleteRegistration', {
+        content_name: 'Tax Peace Assessment',
+        status: 'complete'
+      }, {
+        event_id: eventId,
+        em: data.email?.toLowerCase(),
+        ph: data.phone?.replace(/\D/g, ''),
+        fn: data.firstName?.toLowerCase(),
+        ln: data.lastName?.toLowerCase()
+      });
     }
   } catch (error) {
     console.warn('Cloudflare Worker submission failed:', error);
