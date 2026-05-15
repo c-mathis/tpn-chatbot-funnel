@@ -404,7 +404,7 @@ function render() {
   } else {
     // Subsequent renders - remove first-enter class, update instantly
     answerSection.classList.remove('first-enter');
-    addBotMessage(s.title, s.sub, true);
+    addBotMessage(s.title, s.sub);
     controls.innerHTML = '';
     buildControlsForStep(s);
   }
@@ -780,7 +780,7 @@ function advance(value) {
 
     if (nextStep && nextStep.id === 'state') {
       setTimeout(() => {
-        addBotMessage('Perfect!', getValueReinforcementMessage(), true);
+        addBotMessage('Perfect!', getValueReinforcementMessage());
         setTimeout(() => {
           render();
         }, 500);
@@ -792,7 +792,7 @@ function advance(value) {
     }
   } else {
     setTimeout(() => {
-      addBotMessage('Perfect!', 'Processing your information...', true);
+      addBotMessage('Perfect!', 'Processing your information...');
       setTimeout(submit, 500);
     }, 300);
   }
